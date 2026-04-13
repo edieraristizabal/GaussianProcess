@@ -1,0 +1,29 @@
+# Archivos de datos grandes
+DATA/DEM.tif
+DATA/DEM.tif.ovr
+DATA/results.pkl
+DATA/MenM_VdeA.gpkg
+
+# LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.bbl
+*.blg
+*.pdf
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Otros
+.claude/
+.gemini/
+.claude_metadata/
+.ipynb_checkpoints/
+*.lock
