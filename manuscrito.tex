@@ -329,6 +329,38 @@ El mapa de incertidumbre del PG (Fig.~\ref{fig:mapa_pg}b) es el valor añadido p
     \label{fig:mapa_pg}
 \end{figure}
 
+\subsection{Análisis de la desviación estándar del proceso gaussiano}
+\label{sec:analisis_std}
+
+La Figura~\ref{fig:std_analisis} sintetiza el análisis de la distribución de la desviación estándar posterior $\sigma(\mathbf{x})$ a través de cuatro paneles complementarios: histograma de densidad, diagramas de caja por clase de susceptibilidad y diagramas de dispersión frente a cada covariable morfométrica.
+
+\subsubsection{Distribución de la desviación estándar}
+
+La distribución de $\sigma$ sobre la cuadrícula completa de la cuenca (Fig.~\ref{fig:std_analisis}a) es fuertemente asimétrica hacia la derecha, con una mediana de $0{,}0026$ y una media de $0{,}0041$, lo que indica que la mayor parte de la cuenca está bien restringida por los datos de entrenamiento. El percentil 95 es $0{,}011$ y el máximo absoluto alcanza $0{,}093$, correspondiendo este extremo a celdas en el fondo del valle y en el sector alto de la cuenca donde la densidad de deslizamientos en el espacio de covariables es mínima. La distribución de $\sigma$ en las ubicaciones de deslizamientos es notablemente más estrecha y desplazada hacia valores bajos respecto a la distribución de la cuenca completa (media en deslizamientos $\approx 0{,}0028$), lo cual es esperable: las ubicaciones de entrenamiento son precisamente las zonas del espacio de covariables mejor muestreadas por el PG.
+
+\subsubsection{Desviación estándar por clase de susceptibilidad}
+
+Los diagramas de caja (Fig.~\ref{fig:std_analisis}b) muestran una relación no monótona entre la clase de susceptibilidad y la incertidumbre. La clase Muy Alta ($P > 0{,}8$) exhibe una mediana de $\sigma$ baja y una caja compacta, lo que refleja que las celdas con pendientes muy pronunciadas —que dominan esta clase— corresponden a la región del espacio de covariables más densamente cubierta por los puntos de entrenamiento. La clase Muy Baja ($P < 0{,}2$), que agrupa las zonas de fondo de valle con pendientes bajas y alto ITH, presenta la mayor dispersión de $\sigma$ y la cola más larga, evidenciando que el PG extrapola con mayor incertidumbre hacia esta región donde los deslizamientos son escasos como datos de entrenamiento. Las clases intermedias (Baja y Moderada) muestran valores de $\sigma$ intermedios con mayor variabilidad, consistente con el hecho de que estas zonas transicionales ocupan regiones de covariable moderadamente alejadas del núcleo de entrenamiento.
+
+\subsubsection{Relación entre covariables y desviación estándar}
+
+Los diagramas de dispersión con la mediana por intervalo (Fig.~\ref{fig:std_analisis}c--e) y las correlaciones de rango de Spearman ($\rho$) revelan relaciones sistemáticas entre las covariables morfométricas y la incertidumbre del PG:
+
+\begin{itemize}
+    \item \textbf{Pendiente vs.\ $\sigma$} ($\rho = -0{,}619$, $p < 10^{-10}$): La correlación negativa fuerte indica que la incertidumbre disminuye sistemáticamente a medida que aumenta la pendiente. Esto es coherente con la distribución de los datos de entrenamiento: los 583 deslizamientos están concentrados en laderas de pendiente media-alta (20°--50°), de modo que el PG interpola con alta confianza en esta región pero extrapola con mayor incertidumbre hacia pendientes muy bajas ($< 10°$) donde los eventos de entrenamiento son escasos.
+
+    \item \textbf{Aspecto vs.\ $\sigma$} ($\rho = +0{,}156$, $p < 10^{-10}$): La correlación positiva débil sugiere que las laderas con aspecto entre 180° y 360° (orientadas al S-O) tienden a presentar una incertidumbre ligeramente mayor. Este efecto secundario puede relacionarse con la distribución asimétrica del inventario, donde algunas orientaciones están subrepresentadas en los datos de entrenamiento.
+
+    \item \textbf{ITH vs.\ $\sigma$} ($\rho = +0{,}665$, $p < 10^{-10}$): La correlación positiva fuerte con el ITH es el resultado más relevante: las celdas con valores altos de ITH (zonas convergentes, fondos de valle, canales) acumulan la mayor incertidumbre predictiva. Dado que los deslizamientos de tipo flujo son menos frecuentes en el inventario que los deslizamientos traslacionales de ladera, la región de alto ITH está pobremente representada en el conjunto de entrenamiento. Esto implica que, si bien el modelo asigna probabilidades bajas a estas zonas (consistente con el coeficiente negativo de la RL), la confianza en esa estimación es reducida. Este hallazgo tiene implicaciones directas para la gestión del riesgo: las zonas de canal y fondo de valle con alto ITH requieren validación de campo adicional antes de poder descartar su susceptibilidad con certeza.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{Fig7_GP_std_analysis.png}
+    \caption{Análisis de la desviación estándar posterior $\sigma(\mathbf{x})$ del Proceso Gaussiano sobre la cuenca La Iguana. (a) Histograma de densidad y estimación por núcleo gaussiano (KDE) de $\sigma$ para la cuenca completa (azul) y para las ubicaciones de deslizamientos (rojo); las líneas discontinuas indican las medias respectivas. (b) Diagramas de caja de $\sigma$ estratificados por clase de susceptibilidad de la regresión logística; los colores de las cajas corresponden a la escala de susceptibilidad (verde = Muy Baja, rojo = Muy Alta). (c)--(e) Diagramas de dispersión de $\sigma$ frente a pendiente (c), aspecto (d) e ITH (e); puntos azules = muestra aleatoria de celdas de la cuenca; puntos rojos = ubicaciones de deslizamientos; línea negra = mediana de $\sigma$ por intervalo de la covariable; $\rho$ = correlación de Spearman (todos los valores son estadísticamente significativos, $p < 10^{-10}$).}
+    \label{fig:std_analisis}
+\end{figure}
+
 \subsection{Métricas de desempeño}
 
 La Tabla~\ref{tab:metricas} resume las métricas de discriminación y calibración para ambos modelos evaluados sobre la cuadrícula completa de la cuenca. A nivel de celda, la precisión y la puntuación F1 en el umbral de 0{,}5 son extremadamente bajas debido al desequilibrio de clases natural ($\approx 0{,}11\%$ de tasa positiva); la AUC y la AP son por tanto los indicadores de discriminación primarios.
@@ -358,6 +390,12 @@ Las métricas de discriminación son prácticamente idénticas para ambos modelo
 El modelo RL alcanza una AUC validada de $0{,}788 \pm 0{,}025$, dentro del rango reportado para modelos RL con solo topografía en cuencas andinas tropicales comparables \citep{Pradhan2010, Chen2017}. El papel dominante de la pendiente ($\hat{\beta}_\mathrm{pendiente} = +1{,}193$) confirma que las fuerzas motrices gravitacionales siguen siendo el control de primer orden sobre la iniciación de movimientos en masa superficiales, consistente con la teoría de estabilidad de pendiente infinita \citep{Varnes1978}. La contribución limitada del ITH a la discriminación del modelo —a pesar de su relevancia física establecida para la dinámica de la presión de poros— probablemente refleja limitaciones del MDE de 10 m para resolver las hondonadas microtopográficas donde ocurre la saturación transitoria real, así como el supuesto de estado estacionario subyacente a la formulación del ITH, que puede representar mal los patrones de saturación episódicos impulsados por la lluvia que desencadenan deslizamientos en esta región \citep{Aristizabal2023}.
 
 Los valores absolutos de AUC moderados, aunque aceptables para un modelo de solo topografía, destacan el conocido desafío de lograr alta discriminación con atributos del terreno en pequeñas cuencas urbanas empinadas donde la heterogeneidad litológica, el espesor del suelo, los patrones de uso del suelo y la humedad antecedente también ejercen controles significativos \citep{Reichenbach2018}. El trabajo futuro debería incorporar estimaciones de profundidad del suelo, mapas geológicos a escala 1:10.000 e índices de vegetación derivados de satélites para mejorar la discriminación.
+
+\subsection{Interpretación física de la estructura de incertidumbre del proceso gaussiano}
+
+El análisis de la desviación estándar posterior $\sigma(\mathbf{x})$ revela una estructura de incertidumbre con claro fundamento físico-estadístico. La fuerte correlación negativa entre pendiente y $\sigma$ ($\rho = -0{,}619$) y la correlación positiva fuerte entre ITH y $\sigma$ ($\rho = +0{,}665$) son interpretables en términos de la distribución de los datos de entrenamiento en el espacio de covariables: el PG presenta baja incertidumbre precisamente donde los deslizamientos del inventario están concentrados (laderas empinadas de pendiente 20°--50°), y alta incertidumbre donde los deslizamientos son escasos como observaciones de entrenamiento (zonas planas de alto ITH). Este comportamiento es una consecuencia directa de la propiedad fundamental de los procesos gaussianos de incrementar la varianza posterior a medida que las predicciones se alejan de los puntos de entrenamiento en el espacio de covariables \citep{Rasmussen2006}.
+
+Desde la perspectiva de la gestión del riesgo, estos resultados tienen una implicación práctica concreta: las zonas de fondo de valle y canales con alto ITH —que el modelo RL clasifica como de baja susceptibilidad por la relación negativa del coeficiente del ITH— son precisamente las zonas donde esa estimación es más incierta. La incertidumbre alta en estas zonas no significa necesariamente que el riesgo sea elevado, pero sí que el modelo no tiene suficiente información para afirmar con confianza que el riesgo es bajo. Esta distinción es crítica en planificación territorial: una zona de susceptibilidad baja pero con alta $\sigma$ debe tratarse con más cautela que una zona de susceptibilidad igualmente baja pero con $\sigma$ reducido, y debería ser priorizada para validación en campo. El enfoque de RL convencional, al producir solo una estimación puntual, es incapaz de hacer esta diferenciación.
 
 \subsection{El proceso gaussiano como complemento de la regresión logística}
 
@@ -399,7 +437,7 @@ Las principales conclusiones son:
 
     \item El proceso gaussiano condicionado sobre las predicciones de la RL en las ubicaciones de deslizamientos reproduce el desempeño discriminativo del modelo RL (AUC = $0{,}765$, índice de Brier = $0{,}218$) mientras que adicionalmente proporciona mapas de incertidumbre espacialmente explícitos —una característica no disponible en la RL estándar—. El núcleo de Matérn-$\nicefrac{3}{2}$ optimizado indica una estructura de covarianza suave y de larga longitud de escala en el espacio de covariables.
 
-    \item El mapa de incertidumbre del PG revela que la confianza en la predicción es más alta en las laderas coluviales empinadas donde los datos de entrenamiento están concentrados y más baja en las zonas planas del fondo del valle y los altiplanicies de alta elevación, proporcionando orientación accionable para la ampliación focalizada del inventario.
+    \item El análisis de la desviación estándar posterior del PG revela una estructura de incertidumbre estadística y físicamente coherente: $\sigma$ correlaciona negativamente con la pendiente ($\rho = -0{,}619$) y positivamente con el ITH ($\rho = +0{,}665$), de modo que la mayor incertidumbre se concentra en las zonas de fondo de valle y canales de alto ITH —regiones pobremente representadas en el inventario de entrenamiento—. Este resultado orienta de forma objetiva la priorización de campañas de validación en campo y diferencia zonas de susceptibilidad baja pero incierta de zonas de susceptibilidad baja y bien restringida, distinción imposible de hacer con la RL estándar.
 
     \item Aproximadamente el 37\% de la cuenca La Iguana se clasifica como susceptibilidad Alta o Muy Alta bajo el modelo RL, predominantemente en flancos de canales empinados y hondonadas convergentes entre 1700 y 2400 m de elevación —zonas que deberían recibir atención prioritaria en los planes de gestión del riesgo por movimientos en masa del Área Metropolitana del Valle de Aburrá—.
 
