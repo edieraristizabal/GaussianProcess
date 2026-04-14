@@ -27,3 +27,7 @@ __pycache__/
 .claude_metadata/
 .ipynb_checkpoints/
 *.lock
+.anthropic
+.antigravity
+.gemini
+.claud
