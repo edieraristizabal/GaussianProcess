@@ -85,10 +85,10 @@ en una herramienta de apoyo a la toma de decisiones.
 \label{sec:introduccion}
 
 Los movimientos en masa son una de las amenazas de origen natural de mayor recurrencia y consecuencias en terrenos de montaña y
-ambientes tropicales \citep{Varnes1978, Hungr2014, Gomez2023}. En Colombia, la confluencia de topografía montanosa, perfiles de meteorización
+ambientes tropicales \citep{Varnes1978, Hungr2014, Gomez2023}. En Colombia, la confluencia de topografía montañosa, perfiles de meteorización
 profunda, lluvias de alta intensidad y expansión urbana acelerada en zonas de ladera crean condiciones de riesgo muy altas
-\citep{Aristizabal2012}. El Valle de Aburrá en los andes colombianos, donde se encuentra la ciudad de Medellín, ha registrado
-centenares de movimientos en masa con víctimas fatales desde su expansion sobre las laderas \citep{Nieto2025, Klimes2010}.
+\citep{Aristizabal2012}. El Valle de Aburrá en los Andes colombianos, donde se encuentra la ciudad de Medellín, ha registrado
+centenares de movimientos en masa con víctimas fatales desde su expansión sobre las laderas \citep{Nieto2025, Klimes2010}.
 
 La cartografía de susceptibilidad por movimientos en masa estima la probabilidad espacial de falla a partir de las características
 del terreno y condiciones ambientales, constituyendo la base para la zonificación del riesgo, la planificación territorial y el diseño 
@@ -114,7 +114,7 @@ profundidad del perfil de meteorización, permeabilidad secundaria, lluvia efect
 significativa pero que generalmente no puede capturarse con las covariables topográficas y ambientales disponibles \citep{Corominas2014}. Una celda
 con susceptibilidad predicha de 0{,}7 bien respaldada por el inventario no equivale, desde el punto de vista de la gestión del
 riesgo, a otra con el mismo valor predicho pero pobremente restringida por los datos. Ignorar esta diferencia puede conducir a
-decisiones erroneas \citep{Guzzetti2005}.
+decisiones erróneas \citep{Guzzetti2005}.
 
 La concepción dominante en el modelado de susceptibilidad trata el problema como una clasificación por unidades de análisis: el
 territorio se subdivide en unidades de mapeo, tales como áreas administrativas, cuencas, slope units o celdas de una
@@ -142,20 +142,19 @@ en amenazas naturales incluyen la evaluación del riesgo por deslizamientos en a
 bosques aleatorios y redes neuronales, es el elevado costo computacional, que escala cúbicamente con el número de puntos de
 entrenamiento ($\mathcal{O}(n^3)$), restringiendo su aplicabilidad directa a muestras de tamaño moderado \citep{Rasmussen2006}.
 
-En este artículo se aplica un marco metodologico con Procesos Gaussianos para evalaur la susceptibildiad por movimientos en masa cosnderando 
-la variable respuesta (susceptibilidad) como una variable continua (densidad de movimientos en masa) o categorica (probabiliad de movimiento en masa)
- utilizando variables mr 
-y (iii)~analizar la incertidumbre posterior y su relación con el espacio de covariables para identificar zonas que requieren datos 
-adicionales de campo.
+En este artículo se aplica un marco metodológico con Procesos Gaussianos para evaluar la susceptibilidad por movimientos en masa como una superficie considerando 
+la variable respuesta (susceptibilidad) como una variable continua (densidad de movimientos en masa) o categórica (probabilidad de movimiento en masa)
+ utilizando variables morfométricas continuas y variables ambientales categóricas. Los modelos implementados incorporan la incertidumbre posterior y su relación 
+ con el espacio de covariables para identificar zonas que requieren datos adicionales de campo.
 
 
 \section{Área de estudio}
 
 El área de estudio es la cuenca La Iguana (Fig.~\ref{fig:area_estudio}), ubicada en la vertiente occidental de la Cordillera
-Central dentro del Valle de Aburrá, con una superficie de 52{,}2~km$^2$ y elevaciones entre 1465 y 3141~m~s.n.m.
-\citep{Salazar2018}. La cuenca presenta una red de drenaje dendrítica con alta densidad de drenaje y una energía del relieve
-superior a 1500~m, reflejo del intenso encañonamiento fluvial asociado al tectonismo activo de la Cordillera Central colombiana
-\citep{Salazar2018, Klimes2010}.
+Central de lso Andes Colombianos, dentro de la unidad geografica conocida como Valle de Aburrá. Con una superficie de 52{,}2~km$^2$ 
+y elevaciones entre 1465 y 3141~m~s.n.m. \citep{Salazar2018}. La cuenca presenta una red de drenaje dendrítica con alta densidad de drenaje
+ y un relieve superior a 1500~m, reflejo del intenso encañonamiento fluvial asociado al tectonismo activo de los andes colombianos
+\citep{Salazar2018}.
 
 El substrato geológico está dominado por esquistos cuarzo-micáceos y gneis del \textit{Complejo Cajamarca}, una unidad
 litodémica de edad Permo-Triásica que constituye el núcleo metamórfico de la Cordillera Central entre las fallas de Otú-Pericos
