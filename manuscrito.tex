@@ -201,17 +201,27 @@ donde $g(\mathbf{x})$ es la función latente de proceso gaussiano y $\varepsilon
 variables del modelo clasificador óptimo (pendiente, geología codificada y cobertura codificada) con el mismo conjunto de 
 entrenamiento balanceado de 500 puntos.
 
-Las variables categóricas (geología y cobertura del suelo) fueron transformadas mediante \textit{target encoding}
-\citep{MicciBarreca2001}, reemplazando cada categoría por la proporción observada de deslizamientos dentro de esa clase en el
-conjunto de entrenamiento:
+Los núcleos estándar de PG ---incluido el Matérn-$\nicefrac{3}{2}$--- están definidos sobre espacios de entrada continuos y
+computan similitudes mediante distancias euclídeas; las variables categóricas nominales carecen de una métrica de distancia
+inherente y requieren transformación previa al modelado \citep{GarridoMerchan2020, Rasmussen2006}. Las dos alternativas
+principales son: (i)~la \textit{codificación binaria} (\textit{one-hot}), que genera un indicador 0/1 por categoría ---once
+entradas para dos covariables de cinco clases, multiplicando los hiperparámetros ARD a optimizar con solo 500 puntos de
+entrenamiento---; y (ii)~los \textit{núcleos categóricos} (e.g., tipo Hamming), que tratan todos los pares de clases como
+equidistantes e ignoran gradientes de susceptibilidad entre unidades geológicas o de cobertura.
+
+Se adoptó en cambio el \textit{target encoding} \citep{MicciBarreca2001}, que reemplaza cada categoría por la proporción
+observada de deslizamientos dentro de esa clase en el conjunto de entrenamiento:
 
 \begin{equation}
     X'_{\mathrm{cat}} = \frac{1}{n_{\mathrm{cat}}} \sum_{i \in \mathrm{cat}} y_i
     \label{eq:target}
 \end{equation}
-donde $n_{\mathrm{cat}}$ es el número de celdas de entrenamiento en la categoría y $y_i \in \{0,1\}$ es el indicador binario de 
-deslizamiento. Esta representación es interpretable como la probabilidad empírica de falla de cada unidad y preserva la información 
-diferencial entre categorías sin incrementar la dimensionalidad.
+donde $n_{\mathrm{cat}}$ es el número de celdas de entrenamiento en la categoría y $y_i \in \{0,1\}$ es el indicador binario de
+deslizamiento. Esta estrategia presenta tres ventajas sobre las alternativas: (1)~mantiene la parsimonia del modelo, reduciendo
+las entradas de once a tres y haciendo viable la optimización de hiperparámetros; (2)~la codificación resultante es directamente
+interpretable como la probabilidad empírica de falla de cada unidad litológica o de cobertura, aportando significado físico a la
+longitud de escala ARD de esas variables; y (3)~es compatible con implementaciones estándar del PG sin requerir núcleos
+especializados.
 
 \textbf{Proceso Gaussiano de Clasificación (PGC).} El PGC modela la probabilidad de ocurrencia de deslizamiento mediante una función 
 latente $f(\mathbf{x})$ transformada por una función logística \citep{Rasmussen2006}:
