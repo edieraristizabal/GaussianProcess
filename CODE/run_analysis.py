@@ -404,7 +404,9 @@ for names_cfg, m_name in gpc_configs:
     kernel = 1.0**2 * Matern(length_scale=[1.0]*len(names_cfg), nu=1.5)
     gpc_c  = GaussianProcessClassifier(kernel=kernel, random_state=42)
     gpc_c.fit(X_tr_c, df_all['Label'].iloc[idx_train])
-    probs  = gpc_c.predict_proba(X_f_c)[:, 1]
+    probs = np.zeros(len(X_f_c), dtype=np.float32)
+    for i in range(0, len(X_f_c), chunk):
+        probs[i:i+chunk] = gpc_c.predict_proba(X_f_c[i:i+chunk])[:, 1]
     auc    = roc_auc_score(y_true, probs)
     ap     = average_precision_score(y_true, probs)
     brier  = brier_score_loss(y_true, probs)
