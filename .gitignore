@@ -11,7 +11,7 @@ DATA/MenM_VdeA.gpkg
 *.toc
 *.bbl
 *.blg
-*.pdf
+# *.pdf
 *.fdb_latexmk
 *.fls
 *.synctex.gz
