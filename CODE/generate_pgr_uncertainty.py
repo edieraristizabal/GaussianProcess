@@ -56,7 +56,9 @@ def add_cartography(ax, extent, crs):
             ha='center', va='bottom', fontsize=11, fontweight='bold')
 
 fig, ax = plt.subplots(figsize=(10, 10))
-im = ax.imshow(gpr_std_arr, cmap='viridis', extent=ext)
+vmin_std = float(np.nanmin(gpr_std_arr))
+vmax_std = float(np.nanmax(gpr_std_arr))
+im = ax.imshow(gpr_std_arr, cmap='viridis', vmin=vmin_std, vmax=vmax_std, extent=ext)
 cbar = plt.colorbar(im, ax=ax, fraction=0.035)
 cbar.set_label('Desviación Estándar (Incertidumbre PGR)', fontsize=16)
 cbar.ax.tick_params(labelsize=14)

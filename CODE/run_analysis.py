@@ -299,11 +299,13 @@ print(f'  PGR-KDE -> AUC={auc_gpr:.3f} | AP={ap_gpr:.3f} | '
       f'Brier={brier_gpr:.3f} | r(KDE)={r_gpr:.3f} | RMSE={rmse_gpr:.4f}')
 
 gpr_kde_map = np.full(dem_shape, np.nan, np.float32)
-gpr_kde_map[r_valid, c_valid] = gpr_pred_norm
+gpr_kde_map[r_valid, c_valid] = gpr_pred_clipped
 fig, ax = plt.subplots(figsize=(10, 10))
-im = ax.imshow(gpr_kde_map, cmap=cmap_susc, vmin=0, vmax=1, extent=ext)
+vmin_pgr = float(np.nanmin(gpr_kde_map))
+vmax_pgr = float(np.nanmax(gpr_kde_map))
+im = ax.imshow(gpr_kde_map, cmap=cmap_susc, vmin=vmin_pgr, vmax=vmax_pgr, extent=ext)
 cbar = plt.colorbar(im, ax=ax, fraction=0.035)
-cbar.set_label('Susceptibilidad PGR-KDE (normalizada)', fontsize=16)
+cbar.set_label('Susceptibilidad PGR-KDE', fontsize=16)
 cbar.ax.tick_params(labelsize=14)
 add_cartography(ax, ext, dem_crs)
 plt.tight_layout()

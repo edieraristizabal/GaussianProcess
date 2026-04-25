@@ -398,7 +398,8 @@ representación areal.
 
 La Fig.~\ref{fig:kde_map} muestra la superficie de densidad KDE normalizada del inventario ($h \approx 691$~m). Los núcleos de 
 máxima densidad se concentran en las laderas medias de los tributarios noroccidentales, donde la coexistencia de pendientes 
-fuertes sobre rocas metamórficas y cobertura de pastos o urbano informal genera las condiciones de mayor ocurrencia de deslizamientos. Esta superficie constituye la variable de respuesta del primer enfoque de modelado (PGR).
+fuertes sobre rocas metamórficas y cobertura de pastos o urbano informal genera las condiciones de mayor ocurrencia de deslizamientos. 
+Esta superficie constituye la variable de respuesta del primer enfoque de modelado (PGR).
 
 \begin{figure}[H]
     \centering
@@ -409,35 +410,33 @@ fuertes sobre rocas metamórficas y cobertura de pastos o urbano informal genera
     \label{fig:kde_map}
 \end{figure}
 
-\textbf{Resultados del PGR} La Tabla~\ref{tab:pgr_kde} y la Fig.~\ref{fig:roc_pgr} presentan los resultados del PGR para los 
-modelos univariados y multivariados. Los modelos univariados revelan que las variables categóricas son las más informativas para
+La Tabla~\ref{tab:pgr_kde} y la Fig.~\ref{fig:roc_pgr} presentan los resultados del PGR para los 
+modelos PGR univariados y multivariados. Los modelos univariados revelan que las variables categóricas son las más informativas para
 predecir la densidad KDE del inventario. La geología sola alcanza el mayor AUC (0{,}694), seguida de la cobertura del suelo
 (0{,}631); las variables topográficas continuas (pendiente, aspecto, ITH) se sitúan apenas por encima del nivel aleatorio
-(AUC~$\approx$~0{,}550). El modelo de tres variables (pendiente~+~geología~+~cobertura) obtiene AUC~=~0{,}559 en el paradigma
-de regresión, por debajo de la geología sola, evidenciando que la combinación de covariables no beneficia sustancialmente al PGR.
-El modelo \textit{Benchmark} con las cinco variables alcanza AUC~=~0{,}698, el mayor de todos. La correlación de Pearson
+(AUC~$\approx$~0{,}550). Considerando que el aspecto no se;alo un patron diferencial entre celdas on y sisn deslizamientos y que ITH se correlaciona inversamente con la pendiente,
+se utilizo un modelo de tres variables (pendiente~+~geología~+~cobertura) que obtiene AUC~=~0{,}559, por debajo de la geología sola, 
+evidenciando que la combinación de covariables no beneficia sustancialmente al PGR.
+El modelo con las cinco variables alcanza AUC~=~0{,}698, el mayor de todos. La correlación de Pearson
 entre las predicciones del PGR de tres variables y la superficie KDE objetivo fue $r = 0{,}061$ (RMSE~=~0{,}255), confirmando
 que ninguna configuración logra reproducir adecuadamente la superficie de densidad. El mapa de susceptibilidad derivado del PGR
  (Fig.~\ref{fig:gpr_susc}) muestra una distribución espacialmente difusa sin la cohesión geomorfológica esperada.
 
  \begin{table}[H]
     \centering
-    \caption{Resultados del PGR-KDE para modelos univariados (una variable) y multivariados, evaluados sobre las 2{,}087{,}643 celdas de la cuenca. AUC: área bajo la curva ROC; AP: precisión media; Brier: puntuación de Brier.}
+    \caption{Resultados del PGR para modelos univariados y multivariados. AUC: área bajo la curva ROC; AP: precisión media; Brier: puntuación de Brier.}
     \label{tab:pgr_kde}
     \begin{tabular}{lcccc}
         \toprule
-        Modelo PGR-KDE & $N$ var. & AUC-ROC & AP & Brier \\
+        Modelo PGR & $N$ var. & AUC-ROC & AP & Brier \\
         \midrule
-        \multicolumn{5}{l}{\textit{Modelos univariados}} \\
         \quad Geología & 1 & 0{,}694 & 0{,}001 & 0{,}335 \\
         \quad Cobertura del suelo & 1 & 0{,}631 & 0{,}000 & 0{,}571 \\
         \quad ITH & 1 & 0{,}550 & 0{,}015 & 0{,}151 \\
         \quad Aspecto & 1 & 0{,}550 & 0{,}041 & 0{,}151 \\
         \quad Pendiente & 1 & 0{,}543 & 0{,}048 & 0{,}150 \\
-        \midrule
-        \multicolumn{5}{l}{\textit{Modelos multivariados}} \\
-        \quad Benchmark (todas) & 5 & 0{,}698 & 0{,}002 & 0{,}130 \\
         \quad Pendiente + Geología + Cobertura & 3 & 0{,}559 & 0{,}017 & 0{,}151 \\
+        \quad todas las variables & 5 & 0{,}698 & 0{,}002 & 0{,}130 \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -445,18 +444,17 @@ que ninguna configuración logra reproducir adecuadamente la superficie de densi
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.85\textwidth]{Fig7_gpr_susceptibility.png}
-    \caption{Mapa de susceptibilidad derivado del PGR (predicción normalizada a $[0,1]$). La distribución difusa y la falta de
-    cohesión geomorfológica reflejan la incapacidad del modelo de regresión para reproducir la superficie KDE desde las covariables
-    locales (AUC~=~0{,}559).}
+    \caption{Mapa de susceptibilidad derivado del PGR (predicción normalizada a $[0,1]$). El modelo PGR
+    no logra reproducir la superficie KDE con las covariables locales (AUC~=~0{,}559).}
     \label{fig:gpr_susc}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.72\textwidth]{Fig6_roc_pgr_kde.png}
-    \caption{Curvas ROC para todas las configuraciones del PGR: cinco modelos univariados (una variable cada uno) y dos
-    modelos multivariados (pendiente~+~geología~+~cobertura y \textit{Benchmark} con las cinco variables). Las curvas se agrupan
-    por encima y cerca del azar (AUC entre 0{,}543 y 0{,}698).}
+    \caption{Curvas ROC para todas las configuraciones del PGR: cinco modelos univariados y dos
+    modelos multivariados (pendiente~+~geología~+~cobertura y \textit{toas las variables}). 
+    Las curvas se agrupan ligeramente por encima de un modelo aleatorio (AUC entre 0{,}543 y 0{,}698).}
     \label{fig:roc_pgr}
 \end{figure}
 
@@ -467,20 +465,22 @@ inventario. Las laderas medias, donde la densidad del inventario es mayor, prese
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.85\textwidth]{Fig_pgr_std.png}
-    \caption{Mapa de incertidumbre espacial (desviación estándar posterior) del PGR-KDE. Valores altos indican zonas donde la predicción del PGR está pobremente restringida por los datos históricos; se concentran en los extremos de la cuenca, escasamente cubiertos por el inventario.}
+    \caption{Mapa de incertidumbre espacial (desviación estándar posterior) del PGR. Valores altos indican zonas donde la predicción 
+    del PGR está pobremente restringida por los datos históricos; se concentran en los extremos de la cuenca, escasamente 
+    cubiertos por el inventario.}
     \label{fig:pgr_std}
 \end{figure}
 
-\textbf{Resultados del PGC.} La Fig.~\ref{fig:roc_pgc} y la Tabla~\ref{tab:pgc} presentan las curvas ROC y los valores de AUC 
-para las configuraciones del PGC. Dentro del PGC, el modelo \textit{Benchmark} alcanzó el AUC más alto (0{,}826). El modelo
-topográfico puro (0{,}793) supera al categórico puro (0{,}742), confirmando que la topografía es el predictor estructuralmente
-más potente en conjunto. El modelo de tres variables (pendiente, geología y cobertura) alcanza AUC~=~0{,}823, prácticamente
-idéntico al \textit{Benchmark} (0{,}826), señalando que el aspecto y el ITH son redundantes cuando la geología y la cobertura
-ya están incluidas.
+La Fig.~\ref{fig:roc_pgc} y la Tabla~\ref{tab:pgc} presentan las curvas ROC y los valores de AUC 
+para las configuraciones del PGC. Dentro del PGC, el modelo con todas las variables alcanzó el AUC más alto (0{,}826). 
+El modelo topográfico puro (0{,}793) supera al categórico puro (0{,}742), confirmando que la topografía es el predictor 
+estructuralmente más potente en conjunto. El modelo de tres variables (pendiente, geología y cobertura) alcanza AUC~=~0{,}823, 
+prácticamente idéntico al \textit{todas las variables} (0{,}826), señalando que el aspecto y el ITH son redundantes cuando la geología y 
+la cobertura ya están incluidas.
 
 \begin{table}[H]
     \centering
-    \caption{Resultados de las cuatro configuraciones del PGC evaluadas sobre las 2{,}087{,}643 celdas de la cuenca. Los valores en
+    \caption{Resultados de las cuatro configuraciones del PGC evaluadas sobre la cuenca. Los valores en
     negrita indican los modelos seleccionados por su desempeño. AUC: área bajo la curva ROC; AP: precisión media; Brier:
     puntuación de Brier.}
     \label{tab:pgc}
@@ -488,7 +488,7 @@ ya están incluidas.
         \toprule
         Modelo PGC & $N$ var. & AUC-ROC & AP & Brier \\
         \midrule
-        \textbf{Benchmark (todas)} & 5 & \textbf{0{,}826} & 0{,}001 & 0{,}188 \\
+        \textbf{(todas las variables)} & 5 & \textbf{0{,}826} & 0{,}001 & 0{,}188 \\
         \textbf{Pendiente + Geología + Cobertura} & 3 & \textbf{0{,}823} & 0{,}002 & 0{,}190 \\
         Solo topografía & 3 & 0{,}793 & 0{,}001 & 0{,}195 \\
         Solo geoespacial & 2 & 0{,}742 & 0{,}001 & 0{,}220 \\
@@ -497,7 +497,7 @@ ya están incluidas.
 \end{table}
 
 El mapa del modelo PGC óptimo (Fig.~\ref{fig:mapa_final}) muestra una zonificación coherente con la geomorfología: los valores más 
-altos (susceptibilidad~$> 0{,}6$) se concentran en las laderas medias sobre unidades metamórficas con pendientes escarpadas, 
+altos (susceptibilidad~$> 0{,}6$) se concentran en las laderas medias sobre suelso derivados de rocas metamórficas con pendientes escarpadas, 
 particularmente en los tributarios orientados al norte y noroccidente; el fondo del valle y los filos de divisoria exhiben 
 valores bajos ($< 0{,}3$).
 
@@ -509,31 +509,34 @@ valores bajos ($< 0{,}3$).
     \label{fig:mapa_final}
 \end{figure}
 
-El mapa de incertidumbre del PGC (Fig.~\ref{fig:mapa_std}) muestra la desviación estándar posterior del PGR auxiliar entrenado sobre las etiquetas binarias, utilizado como proxy de la incertidumbre epistémica del PGC. Los valores más altos se concentran en los extremos de la cuenca y en zonas con escasa cobertura del inventario, mientras que las laderas medias ---donde el inventario es más denso--- presentan la menor incertidumbre.
+El mapa de incertidumbre del PGC (Fig.~\ref{fig:mapa_std}) muestra la desviación estándar posterior del PGR auxiliar entrenado 
+sobre las etiquetas binarias, utilizado como proxy de la incertidumbre epistémica del PGC. Los valores más altos se concentran 
+en los extremos de la cuenca y en zonas con escasa cobertura del inventario, mientras que las laderas medias, donde el inventario 
+es más denso, presentan la menor incertidumbre.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.85\textwidth]{Fig10_winner_uncertainty.png}
-    \caption{Mapa de incertidumbre espacial (desviación estándar posterior del PGR auxiliar sobre etiquetas binarias) del modelo PGC óptimo. Valores altos (amarillo) indican zonas donde la predicción está pobremente restringida por los datos históricos.}
+    \caption{Mapa de incertidumbre espacial (desviación estándar posterior del PGR auxiliar sobre etiquetas binarias) del modelo PGC óptimo. 
+    Valores altos (amarillo) indican zonas donde la predicción está pobremente restringida por los datos históricos.}
     \label{fig:mapa_std}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.72\textwidth]{Fig8_roc_pgc.png}
-    \caption{Curvas ROC para las cuatro configuraciones del PGC: \textit{Benchmark} (todas las variables), modelo topográfico 
-    puro (pendiente, aspecto, ITH), modelo categŕico puro (geología, cobertura) y modelo óptimo (pendiente~+~geología~+~cobertura).}
+    \caption{Curvas ROC para las cuatro configuraciones del PGC: \textit{todas las variables}, modelo topográfico 
+    puro (pendiente, aspecto, ITH), modelo categoŕico puro (geología, cobertura) y modelo óptimo (pendiente~+~geología~+~cobertura).}
     \label{fig:roc_pgc}
 \end{figure}
 
 El análisis ARD del modelo PGC óptimo (Tabla~\ref{tab:ard}) revela que la cobertura del suelo es el factor dominante
-(importancia 0{,}272) a resolución de 5~m, seguida de la pendiente (0{,}215) y la geología (0{,}062). Este resultado, en el que
-la cobertura supera a la pendiente, constituye un hallazgo diferenciador respecto a análisis equivalentes realizados a resolución
-más gruesa y se discute en detalle en la Sección~\ref{sec:discusion}.
+(importancia 0{,}272), seguida de la pendiente (0{,}215) y la geología (0{,}062).
 
 \begin{table}[H]
     \centering
-    \caption{Importancia relativa de las variables en el modelo PGC óptimo, estimada como el inverso de la longitud de escala ARD optimizada.}
+    \caption{Importancia relativa de las variables en el modelo PGC óptimo, estimada como el inverso de la longitud 
+    de escala ARD optimizada.}
     \label{tab:ard}
     \begin{tabular}{lcc}
         \toprule
@@ -550,106 +553,79 @@ más gruesa y se discute en detalle en la Sección~\ref{sec:discusion}.
 \section{Discusión}
 \label{sec:discusion}
 
-El resultado más llamativo es el marcado contraste entre el PGR (AUC~$= 0{,}559$) y el PGC (AUC~$= 0{,}823$). Esta diferencia de
-26 puntos porcentuales revela una incompatibilidad fundamental entre el tipo de respuesta modelada y la naturaleza del problema.
-
-La densidad KDE es una estadística que cuantifica \textit{dónde} se concentran los eventos en el espacio geográfico, ponderando la 
-contribución de cada evento por un núcleo gaussiano de radio $h \approx 691$~m. Al usar esta superficie como variable de respuesta 
-del PGR, el modelo intenta aprender qué combinaciones de covariables predicen una alta densidad de eventos dentro de una vecindad 
-de $\sim$700~m, independientemente de los atributos locales del píxel objetivo. Este problema es inherentemente diferente al de la 
-evaluación de la susceptibilidad: aquí la pregunta relevante es \textit{``¿cuán susceptible es esta celda dado su contexto 
-topográfico y geológico local?''}, mientras que el PGR responde a \textit{``¿cuántos eventos han ocurrido históricamente en los 
-alrededores de esta ubicación?''}. La primera pregunta es la pertinente para la gestión del riesgo; la segunda es una medida de 
-la recurrencia geográfica del pasado, que puede estar influida por factores no capturados en las covariables disponibles.
-
 La correlación prácticamente nula entre las predicciones del PGR y la superficie KDE ($r = 0{,}061$) confirma que el espacio de
-covariables locales no tiene capacidad suficiente para predecir la densidad espacial regional del inventario. Adicionalmente, la 
+covariables locales no tiene capacidad suficiente para predecir la densidad espacial regional del inventario. Desde una perspectiva conceptual, el PGR podría ser apropiado si el objetivo fuera predecir la densidad regional 
+de eventos futuros en un contexto con datos ambientales y morfometricos a escala similar; para este caso mas local o puntual al parecer 
+las variables morfometricas locales no explican adecuadamente la densidad de deslizamientos. Adicionalmente, la 
 función latente del PGR se optimiza minimizando el error cuadrático medio sobre los valores de densidad, un criterio de ajuste no 
 alineado con la capacidad discriminativa binaria medida por el AUC, lo que introduce una inconsistencia metodológica entre el 
 criterio de entrenamiento y el de evaluación.
 
 En contraste, el PGC trata cada celda como un ensayo de Bernoulli y optimiza directamente la función latente bajo la verosimilitud 
 binaria, garantizando la alineación entre criterio de entrenamiento y evaluación. Esto explica la ganancia de 26 puntos de AUC
-respecto al PGR. Desde una perspectiva conceptual, el PGR podría ser apropiado si el objetivo fuera predecir la densidad regional 
-de eventos futuros en un contexto de alta resolución de datos climáticos espacio-temporales; para el modelado de susceptibilidad a 
-escala de celda con covariables estáticas del terreno, el PGC indica ser un metodo estadísticamente mas apropiado.
+respecto al PGR. Para el modelado de susceptibilidad a escala de celda con covariables estáticas del terreno, el PGC indica ser un 
+metodo estadísticamente mas apropiado.
 
 Un hallazgo especialmente relevante surge de la comparación de los modelos univariados en ambos tipos de modelo
 (Tablas~\ref{tab:pgr_kde} y~\ref{tab:pgc}): la jerarquía de importancia de las variables cambia al cambiar el tipo de modelo.
 En el PGR, las variables categóricas dominan (geología: AUC~=~0{,}694; cobertura: 0{,}631), mientras que la pendiente es la menos
-informativa (0{,}543). En el PGC a 5~m, la cobertura del suelo es el predictor más relevante (importancia ARD~=~0{,}272),
-seguida de la pendiente (0{,}215) y la geología (0{,}062).
+informativa (0{,}543). En el PGC, la cobertura del suelo es el predictor más relevante (importancia ARD~=~0{,}272),
+seguida de la pendiente (0{,}215) y la geología (0{,}062). Esto podria tambien explicarse por la escala de analisis que explica cada modelo.
+Las variables morfometricas explican condiciones locales o puntuales, lo que se alinea mejor con el modelo PGC binario que representa
+la probabilida de Bernoulli de la presencia de un deslizamiento. Mientras que la superficie del modelo PGR es una densidad que representa 
+una condicion regional y no puntual, que al parecer es explicada por variables regionales.
 
 Esta diferencia refleja la escala de los dos objetivos de predicción. El ancho de banda KDE
 ($h \approx 691$~m) suaviza el inventario en una ventana de más de medio kilómetro, de modo que la variable de respuesta del
 PGR captura la recurrencia regional de eventos. Las unidades geológicas y de cobertura del suelo, cuya extensión espacial supera
 frecuentemente los 691~m, son buenos predictores de la densidad regional del inventario precisamente porque sus límites coinciden
 con las concentraciones suavizadas de eventos. La pendiente, en cambio, varía a la escala del píxel (5~m) y no tiene correlación
-sistemática con la vecindad KDE. En el PGC a 5~m, el objetivo es discriminar celdas individuales; a esta resolución, la cobertura
-del suelo emerge como el predictor dominante, superando a la pendiente, lo que indica que las variaciones locales de la cobertura
----que en la cuenca La Iguana reflejan directamente la urbanización informal y la deforestación en ladera--- son el factor
-condicionante con mayor capacidad discriminativa. Este contraste ilustra que la importancia de una variable no es una propiedad
+sistemática con la vecindad KDE. En el PGC, el objetivo es discriminar celdas individuales; a esta resolución, la cobertura
+del suelo emerge como el predictor dominante, superando a la pendiente, lo que indica que las variaciones locales de la cobertura, 
+que en la cuenca La Iguana reflejan directamente la urbanización informal y la intervencion antropica en ladera, son el factor
+condicionante con mayor capacidad discriminativa. Este contraste senala que la importancia de una variable no es una propiedad
 intrínseca de la covariable, sino dependiente del paradigma estadístico y de la escala espacial del objetivo de predicción.
 
-El AUC de 0{,}823 con el modelo PGC de tres variables se sitúa en el rango superior de los valores reportados en la literatura
-para cuencas andinas. Estudios de referencia basados en regresión logística reportan AUC entre 0{,}72 y 0{,}85 con cinco o más 
-variables \citep{Lombardo2018, Pradhan2010}, mientras que modelos más complejos (bosques aleatorios, redes neuronales) alcanzan 
-0{,}82--0{,}92 \citep{Chen2017, Pham2021}, con frecuencia sin cuantificación nativa de incertidumbre. El PGC alcanza un desempeño 
-competitivo con solo tres variables y proporciona como producto nativo la distribución posterior completa sobre la susceptibilidad.
+Los resultados senalan que el PG alcanza un desempeño competitivo con pocas variables y proporciona como producto nativo la distribución posterior 
+completa sobre la susceptibilidad. Desde una perspectiva práctica, un modelo parsimonioso tiene implicaciones directas para 
+la transferibilidad del método a cuencas con recursos limitados de datos.
 
-La diferencia entre el modelo puramente topográfico (AUC~$= 0{,}793$) y el modelo óptimo que añade geología y cobertura
-(AUC~$= 0{,}823$) representa una ganancia de 3{,}0 puntos con el costo de solo dos variables categóricas. La geología codifica 
-parte de la respuesta hidrológica que el ITH intenta capturar puramente desde la geometría del terreno: las unidades con mayor 
-permeabilidad (depósitos cuaternarios) drenan más rápidamente que los saprolitos de baja conductividad hidráulica sobre roca 
-metamórfica, un contraste que el ITH solo captura indirectamente. La redundancia entre el aspecto y la cobertura del suelo 
-explica por qué el primero resulta prescindible en el modelo óptimo.
-
-Desde una perspectiva práctica, la identificación de un modelo parsimonioso de tres variables tiene implicaciones directas para 
-la transferibilidad del método a cuencas con recursos limitados de datos. Eliminar el ITH, cuya derivación requiere un 
-acondicionamiento hidrológico cuidadoso del MDE, sin pérdida apreciable de desempeño simplifica el flujo de trabajo y reduce 
-las fuentes de error propagado.
-
-La dominancia de la cobertura del suelo en el ARD (importancia relativa 0{,}272) a resolución de 5~m es un hallazgo novedoso:
-la pendiente (0{,}215) ocupa el segundo lugar y la geología el tercero (0{,}062). Este resultado difiere del patrón reportado
-habitualmente en estudios a resolución gruesa, donde la pendiente tiende a ser el predictor dominante \citep{Reichenbach2018,
-Pradhan2010}. A 5~m, la mayor resolución
-permite que el modelo distinga variaciones locales de la cobertura que reflejan directamente la intervención antrópica del suelo
----deforestación, urbanización informal, condominios en ladera--- cuya influencia sobre la inestabilidad supera en esta cuenca
+La dominancia de la cobertura del suelo en el ARD (importancia relativa 0{,}272), sobre la pendiente (0{,}215) y la geología (0{,}062)
+difiere del patrón reportado habitualmente en estudios regionales, donde la pendiente tiende a ser el predictor dominante \citep{Reichenbach2018,
+Pradhan2010}. A mayor resolución el modelo distinge variaciones locales de la cobertura que reflejan directamente la intervención antrópica del suelo, 
+deforestación, urbanización informal, condominios, cuya influencia sobre la susceptibilidad supera en esta cuenca
 al gradiente gravitacional local.
 
-La Fig.~\ref{fig:uncertainty_cov} ilustra cómo se estructura la incertidumbre en el espacio de las tres variables del modelo óptimo.
- Dado que el PGR de incertidumbre fue ajustado exclusivamente sobre pendiente, geología y cobertura, la desviación estándar 
- posterior solo tiene estructura en estas tres dimensiones; variables excluidas del modelo, como el aspecto o el ITH, no 
- presentarían ningún patrón sistemático, lo cual constituye una validación de que el campo $\hat{\sigma}$ tiene una base 
- estadística real. Para la pendiente (panel~A), la desviación estándar es mínima en el rango 20°--45°, que concentra la mayor 
- densidad del inventario de entrenamiento, y aumenta hacia los extremos, donde el modelo extrapola. Para las variables categóricas 
- (paneles~B y~C), las diferencias inter-clase reflejan la heterogeneidad interna de cada unidad y su representación en el 
- conjunto de entrenamiento.
+La Fig.~\ref{fig:uncertainty_cov} ilustra cómo se estructura la incertidumbre en el espacio de las tres variables del modelo
+óptimo (pendiente, geología y cobertura). Para la pendiente (panel~A), la desviación estándar posterior es mínima en el rango
+20°--45°, que concentra la mayor densidad del inventario de entrenamiento, y aumenta hacia los extremos, donde el modelo
+extrapola. Para las variables categóricas (paneles~B y~C), las diferencias inter-clase reflejan la heterogeneidad interna de
+cada unidad y su representación en el conjunto de entrenamiento.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1.0\textwidth]{Fig11_uncertainty_covariates.png}
-    \caption{Incertidumbre del PGC (desviación estándar posterior) en el espacio de las tres variables del modelo óptimo. Panel A: hexbin (densidad logarítmica) con media binada (línea azul) e IQR (banda sombreada) como función de la pendiente; la forma cóncava confirma que la menor incertidumbre se concentra en el rango 20°--45°. Panel B: boxplots por unidad geológica. Panel C: boxplots por clase de cobertura del suelo.}
+    \caption{Incertidumbre del PGC (desviación estándar posterior) en el espacio de las tres variables del modelo óptimo.
+    Panel~A: hexbin (densidad logarítmica) con media binada (línea azul) e IQR~(25--75\%) como función de la pendiente;
+    la forma cóncava confirma que la menor incertidumbre se concentra en el rango 20°--45°.
+    Panel~B: boxplots por unidad geológica. Panel~C: boxplots por clase de cobertura del suelo.}
     \label{fig:uncertainty_cov}
 \end{figure}
 
 
-La Fig.~\ref{fig:uncertainty_class} examina la relación continua entre la susceptibilidad predicha y la incertidumbre para ambos 
-modelos. En el PGC (panel~B), la desviación estándar posterior presenta una tendencia decreciente a medida que aumenta la 
-susceptibilidad: las celdas con probabilidad alta ($> 0{,}6$) tienen la menor incertidumbre, indicando que corresponden a 
-combinaciones de covariables bien representadas en el inventario y son, por tanto, las más robustamente identificadas para 
-priorización de medidas de mitigación. El PGR (panel~A) exhibe un patrón más irregular, sin tendencia monotónica clara respecto 
-a su susceptibilidad normalizada, lo cual refleja que la función latente del PGR no está calibrada para la discriminación binaria 
-sino para la regresión de densidad.
+La Fig.~\ref{fig:uncertainty_class} examina la relación continua entre la susceptibilidad predicha y la incertidumbre
+para el PGC. La desviación estándar posterior presenta una tendencia decreciente a medida que aumenta la susceptibilidad:
+las celdas con probabilidad alta ($> 0{,}6$) tienen la menor incertidumbre, indicando que corresponden a combinaciones de
+covariables bien representadas en el inventario y son, por tanto, las más robustamente identificadas para la priorización
+de medidas de mitigación.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1.0\textwidth]{Fig12_uncertainty_vs_susceptibility.png}
-    \caption{Incertidumbre (desviación estándar posterior) como función continua de la susceptibilidad predicha, para el PGR
-    (panel~A) y el PGC (panel~B). Cada panel muestra el hexbin de las 2{,}087{,}643~celdas (densidad en escala logarítmica),
-    la media binada (línea de color) y el rango intercuartílico IQR~25--75\% (banda sombreada). En el PGC la incertidumbre
-    decrece con la susceptibilidad; en el PGR el patrón es irregular, consistente con un modelo no calibrado para clasificación
-    binaria.}
+    \includegraphics[width=0.75\textwidth]{Fig12_uncertainty_vs_susceptibility.png}
+    \caption{Incertidumbre del PGC (desviación estándar posterior) como función continua de la susceptibilidad predicha.
+    Se muestran las 2{,}087{,}643~celdas de la cuenca como hexbin (densidad en escala logarítmica), la media binada
+    (línea roja) y el rango intercuartílico IQR~25--75\% (banda sombreada). La incertidumbre decrece con la susceptibilidad,
+    lo que indica que las zonas de alta susceptibilidad están mejor restringidas por los datos de entrenamiento.}
     \label{fig:uncertainty_class}
 \end{figure}
 
@@ -660,7 +636,8 @@ baja incertidumbre, zonas razonablemente seguras; y (iv)~baja susceptibilidad y 
 el inventario histórico reduciría la varianza posterior del modelo. Esta clasificación bidimensional es cualitativamente 
 superior a la que proporciona cualquier método sin cuantificación de incertidumbre.
 
-El marco propuesto presenta limitaciones a considerar. El conjunto de entrenamiento de 500 puntos representa el 0{,}024\% de las celdas válidas; estrategias de muestreo espacialmente
+El marco propuesto presenta limitaciones a considerar. El conjunto de entrenamiento de 500 puntos representa el 0{,}024\% de 
+las celdas válidas; estrategias de muestreo espacialmente
 estratificado podrían mejorar la representatividad y reducir el sesgo asociado al desequilibrio de clases
 \citep{Heckmann2014, Chawla2002}. El \textit{target encoding} \citep{MicciBarreca2001} calculado sobre el conjunto completo de
 datos introduce riesgo de filtración de información; implementaciones más rigurosas lo calcularían mediante validación cruzada.
