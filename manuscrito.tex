@@ -334,15 +334,15 @@ que ninguna configuración logra reproducir adecuadamente la superficie de densi
     \label{fig:roc_pgr}
 \end{figure}
 
-El mapa de incertidumbre (Fig.~\ref{fig:mapa_std}) exhibe el patrón complementario esperado: la desviación estándar posterior 
-más elevada aparece en los extremos de la cuenca, que representan combinaciones de covariables escasamente representadas en el 
+El mapa de incertidumbre del PGR (Fig.~\ref{fig:pgr_std}) exhibe el patrón complementario esperado: la desviación estándar posterior
+más elevada aparece en los extremos de la cuenca, que representan combinaciones de covariables escasamente representadas en el
 inventario. Las laderas medias, donde la densidad del inventario es mayor, presentan menor incertidumbre.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{Fig10_winner_uncertainty.png}
-    \caption{Mapa de incertidumbre espacial (desviación estándar posterior del PGR sobre etiquetas binarias) del modelo PGC óptimo. Valores altos (amarillo) indican zonas donde la predicción está pobremente restringida por los datos históricos.}
-    \label{fig:mapa_std}
+    \includegraphics[width=0.85\textwidth]{Fig_pgr_std.png}
+    \caption{Mapa de incertidumbre espacial (desviación estándar posterior) del PGR-KDE. Valores altos indican zonas donde la predicción del PGR está pobremente restringida por los datos históricos; se concentran en los extremos de la cuenca, escasamente cubiertos por el inventario.}
+    \label{fig:pgr_std}
 \end{figure}
 
 \textbf{Resultados del PGC.} La Fig.~\ref{fig:roc_pgc} y la Tabla~\ref{tab:pgc} presentan las curvas ROC y los valores de AUC 
@@ -378,9 +378,18 @@ valores bajos ($< 0{,}3$).
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.85\textwidth]{Fig9_winner_susceptibility.png}
-    \caption{Mapa de susceptibilidad del modelo PGC óptimo (pendiente, geología y cobertura). La escala de color varía de verde 
+    \caption{Mapa de susceptibilidad del modelo PGC óptimo (pendiente, geología y cobertura). La escala de color varía de verde
     oscuro (muy baja susceptibilidad) a rojo (muy alta susceptibilidad).}
     \label{fig:mapa_final}
+\end{figure}
+
+El mapa de incertidumbre del PGC (Fig.~\ref{fig:mapa_std}) muestra la desviación estándar posterior del PGR auxiliar entrenado sobre las etiquetas binarias, utilizado como proxy de la incertidumbre epistémica del PGC. Los valores más altos se concentran en los extremos de la cuenca y en zonas con escasa cobertura del inventario, mientras que las laderas medias ---donde el inventario es más denso--- presentan la menor incertidumbre.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Fig10_winner_uncertainty.png}
+    \caption{Mapa de incertidumbre espacial (desviación estándar posterior del PGR auxiliar sobre etiquetas binarias) del modelo PGC óptimo. Valores altos (amarillo) indican zonas donde la predicción está pobremente restringida por los datos históricos.}
+    \label{fig:mapa_std}
 \end{figure}
 
 \begin{figure}[H]
