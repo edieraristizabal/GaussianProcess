@@ -1,0 +1,6 @@
+Codigo	Nombre
+1	Depósitos (vertiente/aluviales)
+2	Suelos de rocas metamórficas
+3	Suelos de rocas volcánicas
+4	Suelos de rocas graníticas
+5	Suelos de rocas volcánicas

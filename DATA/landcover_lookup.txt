@@ -1,0 +1,6 @@
+Code	Label
+1	Bosque y Matorral
+2	Pastos y Suelos Desnudos
+3	Urbano Formal e Infraestructura
+4	Urbano Informal y Disperso
+5	Condominios y Fincas
