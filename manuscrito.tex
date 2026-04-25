@@ -255,7 +255,11 @@ La función latente $f:\mathbb{R}^D\!\to\mathbb{R}$ que relaciona las $D$ covari
 \end{equation}
 donde se asume media cero y la función de covarianza $k(\mathbf{x},\mathbf{x}')$ codifica la similitud esperada entre
 los valores de $f$ en dos puntos del espacio de covariables: sitios con condiciones morfológicas y ambientales
-similares tendrán susceptibilidades correlacionadas. Se empleó el núcleo Matern-$\nicefrac{3}{2}$ con
+similares tendrán susceptibilidades correlacionadas. La elección de $k$ es la principal decisión de diseño del PG: determina la suavidad de la superficie de susceptibilidad, el alcance de la correlación
+entre sitios en el espacio de covariables y la capacidad del modelo para capturar patrones no lineales.
+En ese sentido, cumple el mismo papel estructural que la forma funcional en la regresión logística
+o las reglas de partición en los bosques aleatorios.
+Se empleó el núcleo Matérn-$\nicefrac{3}{2}$ con
 Determinación Automática de Relevancia (ARD) \citep{Matern1960, Rasmussen2006}:
 \begin{equation}
     k(\mathbf{x},\mathbf{x}') = \sigma_f^2\!\left(1 + \sqrt{3}\,r_l\right)\exp\!\left(-\sqrt{3}\,r_l\right),
@@ -275,14 +279,14 @@ $\boldsymbol{\theta}=\{\sigma_f^2, l_1,\ldots,l_D\}$ se estiman maximizando la l
 Este criterio balancea automáticamente el ajuste a los datos y la complejidad del modelo sin necesidad de un
 conjunto de validación separado.
 
-El costo computacional escala cúbicamente con el tamaño del conjunto de entrenamiento ($\mathcal{O}(n^3)$).
+En los PG el costo computacional se escala cúbicamente con el tamaño del conjunto de entrenamiento ($\mathcal{O}(n^3)$).
 Por ello, y dado el fuerte desequilibrio de clases (583 celdas con deslizamiento frente a más de
-2{,}087{,}000 de fondo) \citep{Chawla2002, Heckmann2014}, se conformó un conjunto de entrenamiento
+2{,}087{,}000 de toda la cuenca) \citep{Chawla2002, Heckmann2014}, se conformó un conjunto de entrenamiento
 balanceado de 500 puntos: 250 celdas con deslizamiento y 250 de fondo, seleccionadas aleatoriamente
 con semilla fija para reproducibilidad. Este conjunto es compartido por el PGR y el PGC. La predicción
 se realizó en bloques de 50{,}000 celdas sobre las 2{,}087{,}643 celdas válidas de la cuenca.
 
-La diferencia fundamental entre ambos modelos radica en la naturaleza de la variable respuesta: continua
+La diferencia fundamental entre un PGR y un PGC radica en la naturaleza de la variable respuesta: continua
 en el PGR y binaria en el PGC. Esta característica determina la función de verosimilitud adoptada y, con
 ello, la forma de la distribución posterior.
 
