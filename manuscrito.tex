@@ -67,7 +67,7 @@ Silverman $\approx$~691~m); sin embargo, este modelo no discriminó adecuadament
 evidenciando que la densidad espacial del inventario no se relaciona de forma directa con el espacio de covariables del
 terreno a resolución de 5~m. Ante este resultado, se adoptó un Proceso Gaussiano de Clasificación (PGC) binaria que modela
 directamente la probabilidad de ocurrencia celda por celda, con verosimilitud de Bernoulli e inferencia mediante la
-aproximación de Laplace. El PGC con núcleo Matérn-$\nicefrac{3}{2}$ y Determinación Automática de Relevancia (ARD) fue
+aproximación de Laplace. El PGC con función de covarianza Matérn-$\nicefrac{3}{2}$ y Determinación Automática de Relevancia (ARD) fue
 evaluado en cuatro combinaciones de variables; un modelo parsimonioso de tres variables ---pendiente, geología y cobertura del
 suelo--- alcanzó AUC~=~0{,}823 sobre las 2{,}087{,}643 celdas de la cuenca, prácticamente idéntico al \textit{Benchmark} de cinco
 variables (AUC~=~0{,}826). El análisis ARD revela la dominancia de la cobertura del suelo (importancia~0{,}272), seguida de la
@@ -238,8 +238,7 @@ donde $\sigma$ es la desviación estándar media de las coordenadas de los event
 
 Finalmente, la superficie continua $\hat{f}(\mathbf{s})$ fue normalizada al intervalo $[0,1]$.
 
-
-\textbf{Marco formal de los Procesos Gaussianos.}
+\subsection{Procesos Gaussianos}
 Un Proceso Gaussiano (PG) es una distribución de probabilidad definida directamente sobre funciones
 \citep{Rasmussen2006}. A diferencia de los modelos convencionales, que producen un único valor de
 susceptibilidad por celda, el PG asigna a cada punto del espacio de covariables una distribución
@@ -259,7 +258,7 @@ similares tendrán susceptibilidades correlacionadas. La elección de $k$ es la 
 entre sitios en el espacio de covariables y la capacidad del modelo para capturar patrones no lineales.
 En ese sentido, cumple el mismo papel estructural que la forma funcional en la regresión logística
 o las reglas de partición en los bosques aleatorios.
-Se empleó el núcleo Matérn-$\nicefrac{3}{2}$ con
+Se empleó la función de covarianza Matérn-$\nicefrac{3}{2}$ con
 Determinación Automática de Relevancia (ARD) \citep{Matern1960, Rasmussen2006}:
 \begin{equation}
     k(\mathbf{x},\mathbf{x}') = \sigma_f^2\!\left(1 + \sqrt{3}\,r_l\right)\exp\!\left(-\sqrt{3}\,r_l\right),
@@ -286,29 +285,12 @@ balanceado de 500 puntos: 250 celdas con deslizamiento y 250 de fondo, seleccion
 con semilla fija para reproducibilidad. Este conjunto es compartido por el PGR y el PGC. La predicción
 se realizó en bloques de 50{,}000 celdas sobre las 2{,}087{,}643 celdas válidas de la cuenca.
 
-La diferencia fundamental entre un PGR y un PGC radica en la naturaleza de la variable respuesta: continua
-en el PGR y binaria en el PGC. Esta característica determina la función de verosimilitud adoptada y, con
-ello, la forma de la distribución posterior.
 
-\textbf{Proceso Gaussiano de Regresión (PGR).} En el PGR la variable respuesta es
-\textit{continua}: la densidad espacial del inventario $\hat{f}(\mathbf{s})$ calculada mediante KDE
-(Ec.~\ref{eq:kde}). Se asume una verosimilitud gaussiana con ruido de observación independiente:
-\begin{equation}
-    y_i = f(\mathbf{x}_i) + \varepsilon_i, \qquad \varepsilon_i \sim \mathcal{N}(0,\sigma_n^2)
-    \label{eq:pgr}
-\end{equation}
-Bajo esta verosimilitud, la distribución posterior $p(f\mid\mathbf{X},\mathbf{y})$ es gaussiana y se
-obtiene analíticamente sin necesidad de aproximaciones. La media posterior proporciona el mapa de
-susceptibilidad y la varianza posterior cuantifica la incertidumbre de la estimación en cada celda.
-Se utilizaron tres covariables: pendiente, geología y cobertura del suelo.
-
-
-Los núcleos estándar de PG ---incluido el Matérn-$\nicefrac{3}{2}$--- están definidos sobre espacios de entrada continuos y
-computan similitudes mediante distancias euclídeas; las variables categóricas nominales carecen de una métrica de distancia
+Las funciones de covarianza continuas ---incluido el Matérn-$\nicefrac{3}{2}$--- están definidas sobre espacios de entrada continuos y
+computan similitudes mediante distancias euclideanas; las variables categóricas nominales carecen de una métrica de distancia
 inherente y requieren transformación previa al modelado \citep{GarridoMerchan2020, Rasmussen2006}. Las dos alternativas
-principales son: (i)~la \textit{codificación binaria} (\textit{one-hot}), que genera un indicador 0/1 por categoría ---once
-entradas para dos covariables de cinco clases, multiplicando los hiperparámetros ARD a optimizar con solo 500 puntos de
-entrenamiento---; y (ii)~los \textit{núcleos categóricos} (e.g., tipo Hamming), que tratan todos los pares de clases como
+principales son: (i)~la \textit{codificación binaria} (\textit{one-hot}), que genera un indicador 0/1 por categoría; y 
+(ii)~las \textit{funciones de covarianza categóricas}, que tratan todos los pares de clases como
 equidistantes e ignoran gradientes de susceptibilidad entre unidades geológicas o de cobertura.
 
 Se adoptó en cambio el \textit{target encoding} \citep{MicciBarreca2001}, que reemplaza cada categoría por la proporción
@@ -320,10 +302,26 @@ observada de deslizamientos dentro de esa clase en el conjunto de entrenamiento:
 \end{equation}
 donde $n_{\mathrm{cat}}$ es el número de celdas de entrenamiento en la categoría y $y_i \in \{0,1\}$ es el indicador binario de
 deslizamiento. Esta estrategia presenta tres ventajas sobre las alternativas: (1)~mantiene la parsimonia del modelo, reduciendo
-las entradas de once a tres y haciendo viable la optimización de hiperparámetros; (2)~la codificación resultante es directamente
+las covariables y dimensiones y haciendo viable la optimización de hiperparámetros; (2)~la codificación resultante es directamente
 interpretable como la probabilidad empírica de falla de cada unidad litológica o de cobertura, aportando significado físico a la
-longitud de escala ARD de esas variables; y (3)~es compatible con implementaciones estándar del PG sin requerir núcleos
-especializados.
+longitud de escala ARD de esas variables; y (3)~es compatible con implementaciones estándar del PG sin requerir funciones de covarianza
+especializadas.
+
+La diferencia fundamental entre un PGR y un PGC radica en la naturaleza de la variable respuesta: continua
+en el PGR y binaria en el PGC. Esta característica determina la función de verosimilitud adoptada y, con
+ello, la forma de la distribución posterior.
+
+\textbf{Proceso Gaussiano de Regresión (PGR).} En el PGR la variable respuesta es
+\textit{continua}: en este caso la densidad espacial del inventario $\hat{f}(\mathbf{s})$ calculada mediante KDE
+(Ec.~\ref{eq:kde}). Se asume una verosimilitud gaussiana con ruido de observación independiente:
+\begin{equation}
+    y_i = f(\mathbf{x}_i) + \varepsilon_i, \qquad \varepsilon_i \sim \mathcal{N}(0,\sigma_n^2)
+    \label{eq:pgr}
+\end{equation}
+Bajo esta verosimilitud, la distribución posterior $p(f\mid\mathbf{X},\mathbf{y})$ es gaussiana y se
+obtiene analíticamente sin necesidad de aproximaciones. La media posterior proporciona el mapa de
+susceptibilidad y la varianza posterior cuantifica la incertidumbre de la estimación en cada celda.
+Se utilizaron tres covariables: pendiente, geología y cobertura del suelo.
 
 \textbf{Proceso Gaussiano de Clasificación (PGC).} En el PGC la variable respuesta es
 \textit{binaria}: presencia ($y=1$) o ausencia ($y=0$) de deslizamiento en cada celda. La verosimilitud
