@@ -156,25 +156,25 @@ y elevaciones entre 1465 y 3141~m~s.n.m. \citep{AristizabalYokota2008}. La cuenc
  y un relieve superior a 1500~m, reflejo del intenso encañonamiento fluvial asociado al tectonismo activo de los Andes colombianos
 \citep{AristizabalYokota2008, GarciaDelgado2020}.
 
-El substrato geológico está dominado por rocas metamorficas, tipo esquistos, anfibolitas y gneis del \textit{Complejo Cajamarca}, una unidad
-litodémica de edad Permo-Triásica que constituye el núcleo metamórfico de la Cordillera Central entre las fallas de Otú-Pericos
+El substrato geológico está dominado por rocas metamorficas, tipo esquistos, anfibolitas y gneis, una unidad
+litodémica que constituye el núcleo metamórfico de la Cordillera Central entre las fallas de Otú-Pericos
 al oriente y la falla de San Jerónimo al occidente \citep{MayaGonzalez1995, Vinasco2006}. Estas rocas metamórficas están
-intensamente meteorizadas en condiciones tropicales, generando perfiles de saprolito de 5 a 20~m de profundidad sobre el macizo
-rocoso fracturado, que se convierten en el material de falla durante los eventos de lluvia intensa \citep{Aristizabal2012,
-Aristizabal2023}. El Complejo Cajamarca está intruido localmente por cuerpos del Batolito Antioqueño (granitoides de edad
-Cretácica) y flanqueado por secuencias volcánicas al norte y al sur; el fondo del valle está cubierto por depósitos coluviales
-y aluviales cuaternarios \citep{MayaGonzalez1995}.
+intensamente fracturadas y meteorizadas, generando perfiles de saprolito de 5 a 20~m de profundidad, susceptibles a deslizamientos
+ durante eventos de lluvia \citep{Aristizabal2023}. Estas rocas metamorficas están intruidas localmente por cuerpos graniticos y 
+ flanqueado por rocas volcánicas de afinidad oceanica tipo dunitas al norte y basaltos al sur. las alderas del valle estan cubiertas por 
+ depositos de vertiente \citep{Garcia2006} y el fondo del valle está cubierto por 
+ depósitos aluviales, aluviotorrenicales \citep{MayaGonzalez1995}.
 
 El régimen climático es tropical bimodal, con precipitaciones medias anuales de 1800 a 3000~mm concentradas en dos períodos
 lluviosos (marzo--mayo y septiembre--noviembre). Las tormentas convectivas de alta intensidad y corta duración constituyen el
-principal detonante de los movimientos en masa en la cuenca \citep{Aristizabal2023}. La cuenca La Iguana es una de las zonas con
-mayor densidad histórica de movimientos en masa del Valle de Aburrá, con 583 eventos georreferenciados que incluyen deslizamientos
-superficiales, flujos de detritos y deslizamientos traslacionales \citep{Aristizabal2023, Klimes2010}.
+principal detonante de los movimientos en masa en la cuenca \citep{Aristizabal2023}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.85\textwidth]{Fig1_study_area.png}
-    \caption{Área de estudio: Cuenca La Iguana. El mapa principal muestra el relieve sombreado con la localización del inventario de movimientos en masa (puntos rojos, $n = 583$) y la red de drenaje. El recuadro muestra la localización regional dentro del Área Metropolitana del Valle de Aburrá.}
+    \caption{Área de estudio: Cuenca La Iguana. El mapa principal muestra el relieve sombreado con la localización del inventario 
+    de movimientos en masa (puntos rojos, $n = 583$) y la red de drenaje. 
+    El recuadro muestra la localización regional dentro del Valle de Aburrá.}
     \label{fig:area_estudio}
 \end{figure}
 
@@ -183,15 +183,21 @@ superficiales, flujos de detritos y deslizamientos traslacionales \citep{Aristiz
 \section{Datos y metodología}
 \label{sec:metodos}
 
-El inventario empleado contiene 583 eventos georreferenciados de la base de datos ed GeoHazards \citep{Aristizabal2023}.
+El inventario de movimientos en masa empleado comprende 583 eventos georreferenciados en la cuenca La Iguana,
+construido mediante interpretación visual sistemática de imágenes de alta resolución submétrica disponibles en Google
+Earth para el período 2000--2025. Cada evento fue delimitado manualmente como polígono sobre las imágenes más recientes
+disponibles para cada fecha, identificando la cicatriz o zona de deposición según el tipo de movimiento, y reducido
+posteriormente a su centroide para el análisis espacial. El inventario está integrado en la base de datos de movimientos
+en masa del Valle de Aburrá descrita en \citet{Aristizabal2023}, la cual documenta las condiciones de lluvia detonante
+asociadas a cada evento.
 
-Se utilizó un MDE de 5~m de resolución derivado de levantamientos LiDAR. Previo a la derivación de atributos, se aplicó un
+Se utilizó un MDE de 1~m de resolución derivado de levantamientos LiDAR. Previo a la derivación de atributos, se aplicó un
 acondicionamiento hidrológico (relleno de depresiones y resolución de ambigüedades de flujo) con la biblioteca \texttt{pysheds}
-\citep{OCallaghan1984}. Todas las capas fueron remuestreadas a la resolución del MDE mediante interpolación bilineal (variables
+\citep{OCallaghan1984}. Todas las capas fueron remuestreadas a la resolución de 5~m mediante interpolación bilineal (variables
 continuas) o por vecino más próximo (variables categóricas).
 
-\textbf{Variables condicionantes.} Se seleccionaron cinco variables que representan los principales factores condicionantes de la
-inestabilidad (Fig.~\ref{fig:covariables}). La pendiente ($\beta$) cuantifica el gradiente gravitacional local \citep{Moore1991}.
+Se seleccionaron cinco covariables que representan los principales factores condicionantes de la
+susceptibilidad por deslizamientos (Fig.~\ref{fig:covariables}). La pendiente ($\beta$) cuantifica el gradiente gravitacional local \citep{Moore1991}.
 El aspecto ($\alpha$, en grados desde el norte geográfico) refleja la orientación de la ladera como proxy de la exposición solar,
 la distribución de humedad y el régimen de vegetación \citep{Moore1991}. El Índice Topográfico de Humedad
 \citep[ITH;][]{BandaKirkby1979, Moore1991} estima la tendencia de cada celda a acumular agua en el suelo en condiciones de estado
