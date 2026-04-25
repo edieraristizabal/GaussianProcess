@@ -331,22 +331,30 @@ conectando la función latente $f(\mathbf{x})$ con la probabilidad de ocurrencia
     p(y=1\mid\mathbf{x}) = \sigma\!\left(f(\mathbf{x})\right) = \frac{1}{1 + \exp\!\left(-f(\mathbf{x})\right)}
     \label{eq:gpc}
 \end{equation}
-Dado que la verosimilitud de Bernoulli no es conjugada con el prior gaussiano, la distribución posterior
-$p(f\mid\mathbf{X},\mathbf{y})$ no tiene forma analítica exacta. La aproximación de Laplace resuelve esto
-localizando el modo $\mathbf{f}^*$ de la posterior, el vector de valores latentes que la maximiza, y
-ajustando una gaussiana centrada en ese modo usando la curvatura local como medida de dispersión
-\citep{Rasmussen2006}. Para cada celda de predicción $\mathbf{x}^*$ se obtiene así
-$f(\mathbf{x}^*) \sim \mathcal{N}(\mu^*, \sigma^{*2})$: no un valor único sino una distribución. Al
-integrar esta distribución a través de la función logística se obtiene la probabilidad de deslizamiento
-junto con su incertidumbre: una varianza pequeña $\sigma^{*2}$ indica que el dato de entrenamiento
-circundante restringe bien la estimación (predicción confiable); una varianza grande indica una zona
-pobremente cubierta por el inventario (alta incertidumbre). La desviación estándar de esta distribución
-de salida constituye el mapa de incertidumbre nativo del PGC.
+
+En el PGR la verosimilitud gaussiana permite obtener la incertidumbre de forma exacta.
+En el PGC, en cambio, la respuesta es binaria, deslizamiento o no deslizaiento, y no existe
+una fórmula directa para calcular, dado el conjunto de entrenamiento, cuán plausible es
+cada posible puntuación de susceptibilidad $f(\mathbf{x})$, es decir la señal continua que el modelo
+genera internamente antes de convertirla a probabilidad mediante la función logística.
+La aproximación de Laplace resuelve esto en dos pasos: primero identifica el valor de
+$f(\mathbf{x})$ que mejor explica los datos observados; luego cuantifica la incertidumbre
+en torno a ese valor midiendo cuán abruptamente cae la verosimilitud si uno se aleja de
+él. Una caída rápida implica poca incertidumbre; una caída lenta, mucha incertidumbre \citep{Rasmussen2006}.
+El resultado es que para cada celda no se obtiene un único valor sino un rango de
+puntuaciones plausibles con sus respectivas probabilidades. Al transformar ese rango a
+escala $[0,1]$ mediante la función logística se obtiene un rango de probabilidades
+de susceptibilidad: celdas bien representadas por el inventario producen rangos estrechos
+(predicción confiable); celdas sin eventos próximos producen rangos amplios (alta
+incertidumbre). La amplitud de ese rango constituye el mapa de incertidumbre nativo del PGC.
 
 Ambos enfoques fueron evaluados mediante el AUC-ROC \citep{Fawcett2006} sobre la cuadrícula completa de la cuenca frente al mapa
-binario del inventario. Se calcularon adicionalmente la Precisión Media (AP) y la puntuación de Brier \citep{Brier1950}. Para el
-PGR se reporta también la correlación de Pearson entre predicciones y superficie KDE objetivo. Todo el análisis se realizó en Python~3 con \texttt{NumPy}, \texttt{Pandas}, 
-\texttt{GeoPandas}, \texttt{Rasterio}, \texttt{SciPy} y \texttt{scikit-learn} \citep{Pedregosa2011}.
+binario del inventario. Se calcularon adicionalmente la Precisión Media (AP) y la puntuación de Brier \citep{Brier1950}, 
+la cual evalúa la exactitud de las predicciones probabilísticas calculando el error cuadrático medio entre la probabilidad estimada 
+y la ocurrencia real observada (donde 0 representa una predicción perfecta y 1 el error máximo). Evaluar esta calibración es fundamental 
+al usar Procesos Gaussianos para garantizar que la susceptibilidad predicha sea estadísticamente confiable. Para el
+PGR se reporta también la correlación de Pearson entre predicciones y superficie KDE objetivo. Todo el análisis se realizó en 
+Python~3 con las librerias \texttt{SciPy} y \texttt{scikit-learn} \citep{Pedregosa2011}.
 
 % =========================================================
 \section{Resultados}
@@ -390,8 +398,7 @@ representación areal.
 
 La Fig.~\ref{fig:kde_map} muestra la superficie de densidad KDE normalizada del inventario ($h \approx 691$~m). Los núcleos de 
 máxima densidad se concentran en las laderas medias de los tributarios noroccidentales, donde la coexistencia de pendientes 
-escarpadas sobre litología metamórfica y cobertura de pastos o urbano informal genera las condiciones de mayor acumulación 
-histórica de eventos. Esta superficie constituye la variable de respuesta del primer enfoque de modelado (PGR).
+fuertes sobre rocas metamórficas y cobertura de pastos o urbano informal genera las condiciones de mayor ocurrencia de deslizamientos. Esta superficie constituye la variable de respuesta del primer enfoque de modelado (PGR).
 
 \begin{figure}[H]
     \centering
