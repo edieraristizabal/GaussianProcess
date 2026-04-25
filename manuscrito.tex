@@ -110,39 +110,41 @@ modelo para generalizar más allá de los casos observados \citep{Heckmann2014}.
 Un aspecto sistemáticamente omitido en la cartografía convencional de susceptibilidad es la cuantificación explícita de la
 incertidumbre asociada a cada predicción. La susceptibilidad es inherentemente incierta: los datos de entrada contienen ruido de
 medición, el inventario de deslizamientos es incompleto y espacialmente sesgado, y existen variables latentes no observadas, 
-profundidad del perfil de meteorización, presión de poros, cohesión del suelo--- cuya influencia sobre la inestabilidad es
-significativa pero no puede capturarse con las covariables topográficas y temáticas disponibles \citep{Corominas2014}. Una celda
+profundidad del perfil de meteorización, permeabilidad secundaria, lluvia efectiva, entre otros, cuya influencia sobre la inestabilidad es
+significativa pero que generalmente no puede capturarse con las covariables topográficas y ambientales disponibles \citep{Corominas2014}. Una celda
 con susceptibilidad predicha de 0{,}7 bien respaldada por el inventario no equivale, desde el punto de vista de la gestión del
 riesgo, a otra con el mismo valor predicho pero pobremente restringida por los datos. Ignorar esta diferencia puede conducir a
-decisiones de planificación territorial, inversión en mitigación y evacuación subóptimas \citep{Guzzetti2005}.
+decisiones erroneas \citep{Guzzetti2005}.
 
 La concepción dominante en el modelado de susceptibilidad trata el problema como una clasificación por unidades de análisis: el
-territorio se subdivide en unidades de mapeo ---áreas administrativas, cuencas, \textit{slope units} o celdas de una
-cuadrícula--- y se asigna un valor escalar de susceptibilidad a cada unidad \citep{Guzzetti2005, Reichenbach2018}. Aunque el uso
+territorio se subdivide en unidades de mapeo, tales como áreas administrativas, cuencas, slope units o celdas de una
+cuadrícula, y se asigna un valor escalar de susceptibilidad a cada unidad \citep{Guzzetti2005, Reichenbach2018}. Aunque el uso
 de celdas de alta resolución reduce el área de cada unidad, la lógica subyacente no cambia: el valor de cada celda se estima de
 forma independiente, sin imponer restricciones de continuidad espacial con sus vecinas. El resultado puede presentar transiciones
-abruptas entre celdas adyacentes con condiciones geológicas y topográficas similares, inconsistentes con el carácter continuo y
-gradual de los procesos geomorfológicos que controlan la inestabilidad. Una perspectiva alternativa consiste en tratar la
+abruptas entre celdas adyacentes con condiciones ambientales y topográficas similares, inconsistentes con el carácter continuo y
+gradual de los procesos geomorfológicos que controlan la estabilidad de la ladera. Una perspectiva alternativa consiste en tratar la
 susceptibilidad como una superficie aleatoria continua: una función espacialmente coherente que varía de forma suave a través del
-paisaje y cuya estructura de correlación refleja la dependencia natural entre sitios próximos.
+paisaje y cuya estructura de correlación refleja la dependencia natural entre sitios próximos \citep{Lombardo2020}.
 
 Los Procesos Gaussianos (PG) ofrecen un marco probabilístico no paramétrico que, de forma natural, responde a los tres desafíos
 anteriores \citep{Rasmussen2006}. En términos intuitivos, un PG define una distribución de probabilidad directamente sobre
 funciones: en lugar de producir una única estimación de susceptibilidad, el modelo mantiene una familia de funciones compatibles
-con los datos observados y, para cualquier localización del territorio, proporciona simultáneamente la susceptibilidad esperada y
-la incertidumbre de esa estimación expresada como una distribución posterior completa. La estructura de correlación espacial está
-codificada en una función de covarianza o núcleo, que impone coherencia entre localizaciones próximas y convierte al mapa
+con los datos observados y, para cualquier localización del territorio, proporciona simultáneamente la susceptibilidad media de las 
+funciones compatibles y la incertidumbre de esa estimación expresada como una distribución posterior completa. La estructura de 
+correlación espacial está codificada en una función de covarianza, que impone coherencia entre localizaciones próximas y convierte al mapa
 predicho en una superficie continua: la información de un punto observado se propaga de forma controlada hacia su entorno,
 evitando las transiciones abruptas propias de los modelos por unidades independientes. Los PG pueden emplearse tanto en modo
 regresión (PGR), con variable respuesta continua, como en modo clasificación (PGC), con respuesta binaria; y sus aplicaciones
-en amenazas naturales incluyen la predicción del movimiento del suelo sísmico \citep{Lombardo2020} y el modelado de flujos de
-detritos \citep{Lombardo2019}. Su principal limitación frente a métodos más ampliamente utilizados ---regresión logística,
-bosques aleatorios, redes neuronales--- es el elevado costo computacional, que escala cúbicamente con el número de puntos de
-entrenamiento ($\mathcal{O}(n^3)$), restringiendo su aplicabilidad directa a muestras de tamaño moderado.
+en amenazas naturales incluyen la evaluación del riesgo por deslizamientos en asentamientos de alta montaña mediante GPC
+\citep{Gao2021}, la mejora de índices estadísticos de susceptibilidad combinando GPR con análisis de factores espaciales
+\citep{Cheng2022}, y el pronóstico probabilístico de series temporales de desplazamiento de laderas con GPR disperso
+\citep{Yang2022}. Su principal limitación frente a métodos más ampliamente utilizados, como regresión logística,
+bosques aleatorios y redes neuronales, es el elevado costo computacional, que escala cúbicamente con el número de puntos de
+entrenamiento ($\mathcal{O}(n^3)$), restringiendo su aplicabilidad directa a muestras de tamaño moderado \citep{Rasmussen2006}.
 
-En este artículo se propone y aplica un marco comparativo en dos etapas: (i)~explorar si un PGR entrenado sobre la superficie de 
-densidad del inventario obtenida mediante KDE puede producir mapas de susceptibilidad útiles; (ii)~a partir de los resultados, 
-implementar el PGC binario, evaluar cuatro combinaciones de variables condicionantes y seleccionar el modelo parsimonioso óptimo; 
+En este artículo se aplica un marco metodologico con Procesos Gaussianos para evalaur la susceptibildiad por movimientos en masa cosnderando 
+la variable respuesta (susceptibilidad) como una variable continua (densidad de movimientos en masa) o categorica (probabiliad de movimiento en masa)
+ utilizando variables mr 
 y (iii)~analizar la incertidumbre posterior y su relación con el espacio de covariables para identificar zonas que requieren datos 
 adicionales de campo.
 
