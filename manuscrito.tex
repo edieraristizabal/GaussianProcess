@@ -332,12 +332,16 @@ conectando la función latente $f(\mathbf{x})$ con la probabilidad de ocurrencia
     \label{eq:gpc}
 \end{equation}
 Dado que la verosimilitud de Bernoulli no es conjugada con el prior gaussiano, la distribución posterior
-$p(f\mid\mathbf{X},\mathbf{y})$ no tiene forma cerrada y se aproxima mediante el método de Laplace, que
-ajusta una distribución gaussiana alrededor del modo de la posterior \citep{Rasmussen2006}. La
-incertidumbre posterior de la función latente se propaga a través de la función logística para obtener la
-distribución de probabilidad de susceptibilidad en cada celda, constituyendo el mapa de
-incertidumbre nativo del modelo.
-
+$p(f\mid\mathbf{X},\mathbf{y})$ no tiene forma analítica exacta. La aproximación de Laplace resuelve esto
+localizando el modo $\mathbf{f}^*$ de la posterior, el vector de valores latentes que la maximiza, y
+ajustando una gaussiana centrada en ese modo usando la curvatura local como medida de dispersión
+\citep{Rasmussen2006}. Para cada celda de predicción $\mathbf{x}^*$ se obtiene así
+$f(\mathbf{x}^*) \sim \mathcal{N}(\mu^*, \sigma^{*2})$: no un valor único sino una distribución. Al
+integrar esta distribución a través de la función logística se obtiene la probabilidad de deslizamiento
+junto con su incertidumbre: una varianza pequeña $\sigma^{*2}$ indica que el dato de entrenamiento
+circundante restringe bien la estimación (predicción confiable); una varianza grande indica una zona
+pobremente cubierta por el inventario (alta incertidumbre). La desviación estándar de esta distribución
+de salida constituye el mapa de incertidumbre nativo del PGC.
 
 Ambos enfoques fueron evaluados mediante el AUC-ROC \citep{Fawcett2006} sobre la cuadrícula completa de la cuenca frente al mapa
 binario del inventario. Se calcularon adicionalmente la Precisión Media (AP) y la puntuación de Brier \citep{Brier1950}. Para el
