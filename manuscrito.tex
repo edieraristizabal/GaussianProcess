@@ -84,27 +84,28 @@ en una herramienta de apoyo a la toma de decisiones.
 \section{Introducción}
 \label{sec:introduccion}
 
-Los movimientos en masa son una de las amenazas de origen natural de mayor recurrencia y consecuencias en terrenos de montaña y 
-ambientes tropicales \citep{Varnes1978, Hungr2014}. En Colombia, la confluencia de topografía escarpada, perfiles de meteorización 
-profunda, lluvias de alta intensidad y expansión urbana acelerada en zonas de ladera crean condiciones de riesgo muy altas 
-\citep{Aristizabal2023}. El Valle de Aburrá, donde se encuentra la ciudad de Medellín (Colombia), ha registrado centenares de 
-eventos con víctimas fatales durante las últimas cuatro décadas.
+Los movimientos en masa son una de las amenazas de origen natural de mayor recurrencia y consecuencias en terrenos de montaña y
+ambientes tropicales \citep{Varnes1978, Hungr2014}. En Colombia, la confluencia de topografía escarpada, perfiles de meteorización
+profunda, lluvias de alta intensidad y expansión urbana acelerada en zonas de ladera crean condiciones de riesgo muy altas
+\citep{Aristizabal2020, Aristizabal2023}. El Valle de Aburrá, donde se encuentra la ciudad de Medellín (Colombia), ha registrado
+centenares de eventos con víctimas fatales durante las últimas cuatro décadas \citep{Aristizabal2020, Klimes2010}.
 
-La cartografía de susceptibilidad por movimientos en masa estima la probabilidad espacial de falla a partir de las características 
+La cartografía de susceptibilidad por movimientos en masa estima la probabilidad espacial de falla a partir de las características
 del terreno, constituyendo la base para la zonificación del riesgo, la planificación territorial y el diseño de medidas de mitigación
- \citep{Guzzetti2005, Corominas2014}. Durante los últimos treinta años se ha desarrollado un amplio espectro de enfoques estadísticos
-  y de aprendizaje automático, desde métodos bivariados hasta regresión logística (RL), máquinas de soporte vectorial, bosques 
-  aleatorios y redes neuronales profundas \citep{Reichenbach2018, Pham2021, Chen2017}. Entre estos, la RL sigue siendo el 
-  método de referencia por su interpretabilidad estadística, y protocolos de validación binarios bien establecidos 
-  \citep{Atkinson1998, Lombardo2018}. Sin embargo, la RL impone una relación lineal entre el predictor transformado por el logit y 
-  las covariables, y produce una estimación puntual de la probabilidad sin cuantificar la incertidumbre de la superficie predicha.
+\citep{Guzzetti2005, Corominas2014}. Durante los últimos treinta años se ha desarrollado un amplio espectro de enfoques estadísticos
+y de aprendizaje automático, desde métodos bivariados hasta regresión logística (RL), máquinas de soporte vectorial, bosques
+aleatorios y redes neuronales profundas \citep{Reichenbach2018, Budimir2015, Pham2021, Chen2017}. Entre estos, la RL sigue siendo el
+método de referencia por su interpretabilidad estadística y sus protocolos de validación binarios bien establecidos
+\citep{HosmerLemeshow2000, Atkinson1998, Lombardo2018}. Sin embargo, la RL impone una relación lineal entre el predictor
+transformado por el logit y las covariables, y produce una estimación puntual de la probabilidad sin cuantificar la incertidumbre
+de la superficie predicha \citep{Fawcett2006}.
 
-Los Procesos Gaussianos (PG), por otro lado, ofrecen una alternativa bayesiana no paramétrica que modela tanto la susceptibilidad 
-esperada como la incertidumbre de esa estimación en cada ubicación del terreno \citep{Rasmussen2006}. En un modelo de PG, el prior 
-sobre la función predictiva está especificado por una función de covarianza (núcleo), cuyos hiperparámetros son optimizados 
-maximizando la verosimilitud marginal logarítmica. Los PG pueden emplearse tanto en modo regresión (PGR), con variable respuesta 
-continua, como en modo clasificación (PGC), con respuesta binaria. Aplicaciones previas de PG en amenazas incluyen la predicción 
-del movimiento del suelo sísmico \citep{Lombardo2020} y el modelado de flujos de detritos \citep{Lombardo2019}.
+Los Procesos Gaussianos (PG), por otro lado, ofrecen una alternativa bayesiana no paramétrica que modela tanto la susceptibilidad
+esperada como la incertidumbre de esa estimación en cada ubicación del terreno \citep{Rasmussen2006}. En un modelo de PG, el prior
+sobre la función predictiva está especificado por una función de covarianza (núcleo), cuyos hiperparámetros son optimizados
+maximizando la verosimilitud marginal logarítmica \citep{Rasmussen2006}. Los PG pueden emplearse tanto en modo regresión (PGR), con
+variable respuesta continua, como en modo clasificación (PGC), con respuesta binaria. Aplicaciones previas de PG en amenazas
+incluyen la predicción del movimiento del suelo sísmico \citep{Lombardo2020} y el modelado de flujos de detritos \citep{Lombardo2019}.
 
 En este artículo se propone y aplica un marco comparativo en dos etapas: (i)~explorar si un PGR entrenado sobre la superficie de 
 densidad del inventario obtenida mediante KDE puede producir mapas de susceptibilidad útiles; (ii)~a partir de los resultados, 
@@ -114,14 +115,27 @@ adicionales de campo.
 
 
 \section{Área de estudio}
-El área de estudio es la cuenca La Iguana (Fig.~\ref{fig:area_estudio}), ubicada en la vertiente occidental de la Cordillera Central 
-dentro del Valle de Aburrá, con una superficie de 52{,}2~km$^2$ y elevaciones entre 1465 y 3141~m~s.n.m. La cuenca presenta 
-pendientes escarpadas, un substrato geológico dominado por esquistos y gneis metamórficos del Complejo Cajamarca, intensamente 
-meteorizados hasta saprolito de 5 a 20~m, con intrusivos graníticos, secuencias volcánicas y depósitos coluviales y aluviales 
-en el fondo del valle. 
 
-El régimen climático es tropical bimodal, con precipitaciones medias anuales de 1800 a 3000~mm y tormentas 
-convectivas de corta duración que constituyen el principal detonante de los movimientos en masa \citep{Aristizabal2023}. 
+El área de estudio es la cuenca La Iguana (Fig.~\ref{fig:area_estudio}), ubicada en la vertiente occidental de la Cordillera
+Central dentro del Valle de Aburrá, con una superficie de 52{,}2~km$^2$ y elevaciones entre 1465 y 3141~m~s.n.m.
+\citep{Salazar2018}. La cuenca presenta una red de drenaje dendrítica con alta densidad de drenaje y una energía del relieve
+superior a 1500~m, reflejo del intenso encañonamiento fluvial asociado al tectonismo activo de la Cordillera Central colombiana
+\citep{Salazar2018, Klimes2010}.
+
+El substrato geológico está dominado por esquistos cuarzo-micáceos y gneis del \textit{Complejo Cajamarca}, una unidad
+litodémica de edad Permo-Triásica que constituye el núcleo metamórfico de la Cordillera Central entre las fallas de Otú-Pericos
+al oriente y la falla de San Jerónimo al occidente \citep{MayaGonzalez1995, Vinasco2006}. Estas rocas metamórficas están
+intensamente meteorizadas en condiciones tropicales, generando perfiles de saprolito de 5 a 20~m de profundidad sobre el macizo
+rocoso fracturado, que se convierten en el material de falla durante los eventos de lluvia intensa \citep{Aristizabal2012,
+Aristizabal2023}. El Complejo Cajamarca está intruido localmente por cuerpos del Batolito Antioqueño (granitoides de edad
+Cretácica) y flanqueado por secuencias volcánicas al norte y al sur; el fondo del valle está cubierto por depósitos coluviales
+y aluviales cuaternarios \citep{MayaGonzalez1995}.
+
+El régimen climático es tropical bimodal, con precipitaciones medias anuales de 1800 a 3000~mm concentradas en dos períodos
+lluviosos (marzo--mayo y septiembre--noviembre). Las tormentas convectivas de alta intensidad y corta duración constituyen el
+principal detonante de los movimientos en masa en la cuenca \citep{Aristizabal2023}. La cuenca La Iguana es una de las zonas con
+mayor densidad histórica de movimientos en masa del Valle de Aburrá, con 583 eventos georreferenciados que incluyen deslizamientos
+superficiales, flujos de detritos y deslizamientos traslacionales \citep{Aristizabal2023, Klimes2010}.
 
 \begin{figure}[H]
     \centering
@@ -138,19 +152,20 @@ convectivas de corta duración que constituyen el principal detonante de los mov
 El inventario empleado contiene 583 eventos georreferenciados de la base de datos ed GeoHazards \citep{Aristizabal2023}.
 
 Se utilizó un MDE de 5~m de resolución derivado de levantamientos LiDAR. Previo a la derivación de atributos, se aplicó un
-acondicionamiento hidrológico (relleno de depresiones y resolución de ambigüedades de flujo) con la biblioteca \texttt{pysheds}.
-Todas las capas fueron remuestreadas a la resolución del MDE mediante interpolación bilineal (variables continuas) o por vecino
-más próximo (variables categóricas).
+acondicionamiento hidrológico (relleno de depresiones y resolución de ambigüedades de flujo) con la biblioteca \texttt{pysheds}
+\citep{OCallaghan1984}. Todas las capas fueron remuestreadas a la resolución del MDE mediante interpolación bilineal (variables
+continuas) o por vecino más próximo (variables categóricas).
 
-\textbf{Variables condicionantes.} Se seleccionaron cinco variables que representan los principales factores condicionantes de la 
-inestabilidad (Fig.~\ref{fig:covariables}). La pendiente ($\beta$) cuantifica el gradiente gravitacional local. El aspecto ($\alpha$,
-en grados desde el norte geográfico) refleja la orientación de la ladera como proxy de la exposición solar, la distribución de 
-humedad y el régimen de vegetación. El Índice Topográfico de Humedad \citep[ITH;][]{BandaKirkby1979} estima la tendencia de cada 
-celda a acumular agua en el suelo en condiciones de estado estacionario. La geología fue obtenida de la cartografía vectorial del 
-área metropolitana y rasterizada, distinguiendo cinco unidades litológicas: depósitos cuaternarios, esquistos y gneis metamórficos 
-del Complejo Cajamarca, intrusivos graníticos, y dos secuencias volcánicas (norte y sur). La cobertura del suelo fue derivada de 
-imágenes de sensores remotos y reclasificada en cinco categorías funcionales: bosque, pastos y herbazales, urbano formal, urbano 
-informal y condominios/áreas periurbanas.
+\textbf{Variables condicionantes.} Se seleccionaron cinco variables que representan los principales factores condicionantes de la
+inestabilidad (Fig.~\ref{fig:covariables}). La pendiente ($\beta$) cuantifica el gradiente gravitacional local \citep{Moore1991}.
+El aspecto ($\alpha$, en grados desde el norte geográfico) refleja la orientación de la ladera como proxy de la exposición solar,
+la distribución de humedad y el régimen de vegetación \citep{Moore1991}. El Índice Topográfico de Humedad
+\citep[ITH;][]{BandaKirkby1979, Moore1991} estima la tendencia de cada celda a acumular agua en el suelo en condiciones de estado
+estacionario. La geología fue obtenida de la cartografía vectorial del área metropolitana y rasterizada, distinguiendo cinco
+unidades litológicas: depósitos cuaternarios, esquistos y gneis metamórficos del Complejo Cajamarca, intrusivos graníticos, y
+dos secuencias volcánicas (norte y sur) \citep{MayaGonzalez1995}. La cobertura del suelo fue derivada de imágenes de sensores
+remotos y reclasificada en cinco categorías funcionales: bosque, pastos y herbazales, urbano formal, urbano informal y
+condominios/áreas periurbanas.
 
 \begin{figure}[H]
     \centering
@@ -170,9 +185,9 @@ cuenca es:
     \hat{f}(\mathbf{s}) = \frac{1}{n\,h^2} \sum_{i=1}^{n} K\!\left(\frac{\mathbf{s} - \mathbf{s}_i}{h}\right)
     \label{eq:kde}
 \end{equation}
-donde $n = 583$ es el número de eventos, $K(\cdot)$ es el núcleo gaussiano isótropo y $h$ es el ancho de banda seleccionado 
-automáticamente mediante la regla de Silverman ($h \approx 691$~m). La superficie $\hat{f}(\mathbf{s})$ fue normalizada al 
-intervalo $[0,1]$ para su uso como variable de respuesta del primer modelo.
+donde $n = 583$ es el número de eventos, $K(\cdot)$ es el núcleo gaussiano isótropo y $h$ es el ancho de banda seleccionado
+automáticamente mediante la regla de Silverman ($h \approx 691$~m) \citep{Silverman1986}. La superficie $\hat{f}(\mathbf{s})$
+fue normalizada al intervalo $[0,1]$ para su uso como variable de respuesta del primer modelo.
 
 \textbf{Proceso Gaussiano de Regresión (PGR).} La primera estrategia de modelado consistió en entrenar un Proceso Gaussiano de Regresión que predice la densidad KDE 
 del inventario a partir de las covariables del terreno. En este enfoque, la variable de respuesta es el valor de densidad 
@@ -186,8 +201,9 @@ donde $g(\mathbf{x})$ es la función latente de proceso gaussiano y $\varepsilon
 variables del modelo clasificador óptimo (pendiente, geología codificada y cobertura codificada) con el mismo conjunto de 
 entrenamiento balanceado de 500 puntos.
 
-Las variables categóricas (geología y cobertura del suelo) fueron transformadas reemplazando cada categoría por la proporción 
-observada de deslizamientos dentro de esa clase en el conjunto de entrenamiento:
+Las variables categóricas (geología y cobertura del suelo) fueron transformadas mediante \textit{target encoding}
+\citep{MicciBarreca2001}, reemplazando cada categoría por la proporción observada de deslizamientos dentro de esa clase en el
+conjunto de entrenamiento:
 
 \begin{equation}
     X'_{\mathrm{cat}} = \frac{1}{n_{\mathrm{cat}}} \sum_{i \in \mathrm{cat}} y_i
@@ -207,8 +223,8 @@ latente $f(\mathbf{x})$ transformada por una función logística \citep{Rasmusse
 
 La función latente sigue un prior de PG $f(\mathbf{x}) \sim \mathcal{GP}(0, k(\mathbf{x}, \mathbf{x}'))$. Dado que la verosimilitud 
 de Bernoulli no es conjugada con el prior gaussiano, la inferencia posterior se realiza mediante la aproximación de Laplace. 
-Se empleó un núcleo de Matérn-$\nicefrac{3}{2}$ con Determinación Automática de Relevancia (ARD), que permite a cada variable $d$ 
-tener su propia longitud de escala optimizada $l_d$:
+Se empleó un núcleo de Matérn-$\nicefrac{3}{2}$ \citep{Matern1960} con Determinación Automática de Relevancia (ARD)
+\citep{Rasmussen2006}, que permite a cada variable $d$ tener su propia longitud de escala optimizada $l_d$:
 
 \begin{equation}
     k(\mathbf{x}, \mathbf{x}') = \sigma_f^2 \left(1 + \sqrt{3}\,r_l\right)\exp\!\left(-\sqrt{3}\,r_l\right), \qquad r_l = \sqrt{\sum_{d} \left(\frac{x_d - x'_d}{l_d}\right)^2}
@@ -218,15 +234,16 @@ tener su propia longitud de escala optimizada $l_d$:
 La importancia relativa de cada variable se estima como $1/l_d^*$: longitud de escala pequeña indica alta relevancia para la 
 clasificación.
 
-El fuerte desequilibrio de clases (583 celdas con deslizamiento frente a más de 2{,}087{,}000 de fondo) hace al entrenamiento directo
-computacionalmente inviable para el PGC ($\mathcal{O}(n^3)$). Se conformó un conjunto balanceado de 500 puntos: 250 celdas con
-deslizamiento y 250 de fondo (semilla fija para reproducibilidad), compartido entre el PGR y PGC. La predicción se realizó en
+El fuerte desequilibrio de clases (583 celdas con deslizamiento frente a más de 2{,}087{,}000 de fondo) hace al entrenamiento
+directo computacionalmente inviable para el PGC ($\mathcal{O}(n^3)$) y es un desafío reconocido en el modelado de susceptibilidad
+\citep{Chawla2002, Heckmann2014}. Se conformó un conjunto balanceado de 500 puntos: 250 celdas con deslizamiento y 250 de fondo
+(semilla fija para reproducibilidad), compartido entre el PGR y PGC. La predicción se realizó en
 bloques de 50{,}000 celdas sobre las 2{,}087{,}643 celdas válidas. Adicionalmente, se entrenó un PGR sobre las etiquetas binarias para 
 obtener la desviación estándar posterior $\hat{\sigma}(\mathbf{x})$ como proxy de la incertidumbre epistémica.
 
-Ambos enfoques fueron evaluados mediante el AUC-ROC sobre la cuadrícula completa de la cuenca frente al mapa binario del inventario. 
-Se calcularon adicionalmente la Precisión Media (AP) y la puntuación de Brier. Para el PGR se reporta también la correlación de 
-Pearson entre predicciones y superficie KDE objetivo. Todo el análisis se realizó en Python~3 con \texttt{NumPy}, \texttt{Pandas}, 
+Ambos enfoques fueron evaluados mediante el AUC-ROC \citep{Fawcett2006} sobre la cuadrícula completa de la cuenca frente al mapa
+binario del inventario. Se calcularon adicionalmente la Precisión Media (AP) y la puntuación de Brier \citep{Brier1950}. Para el
+PGR se reporta también la correlación de Pearson entre predicciones y superficie KDE objetivo. Todo el análisis se realizó en Python~3 con \texttt{NumPy}, \texttt{Pandas}, 
 \texttt{GeoPandas}, \texttt{Rasterio}, \texttt{SciPy} y \texttt{scikit-learn} \citep{Pedregosa2011}.
 
 % =========================================================
@@ -485,7 +502,8 @@ las fuentes de error propagado.
 
 La dominancia de la cobertura del suelo en el ARD (importancia relativa 0{,}272) a resolución de 5~m es un hallazgo novedoso:
 la pendiente (0{,}215) ocupa el segundo lugar y la geología el tercero (0{,}062). Este resultado difiere del patrón reportado
-habitualmente en estudios a resolución gruesa, donde la pendiente tiende a ser el predictor dominante. A 5~m, la mayor resolución
+habitualmente en estudios a resolución gruesa, donde la pendiente tiende a ser el predictor dominante \citep{Reichenbach2018,
+Pradhan2010}. A 5~m, la mayor resolución
 permite que el modelo distinga variaciones locales de la cobertura que reflejan directamente la intervención antrópica del suelo
 ---deforestación, urbanización informal, condominios en ladera--- cuya influencia sobre la inestabilidad supera en esta cuenca
 al gradiente gravitacional local.
@@ -533,11 +551,12 @@ baja incertidumbre, zonas razonablemente seguras; y (iv)~baja susceptibilidad y 
 el inventario histórico reduciría la varianza posterior del modelo. Esta clasificación bidimensional es cualitativamente 
 superior a la que proporciona cualquier método sin cuantificación de incertidumbre.
 
-El marco propuesto presenta limitaciones a considerar. El conjunto de entrenamiento de 500 puntos representa el 0{,}024\% de las
-celdas válidas; estrategias de muestreo espacialmente estratificado podrían mejorar la representatividad. 
-El \textit{target encoding} calculado sobre el conjunto completo de datos introduce riesgo de filtración de información; 
-implementaciones más rigurosas lo calcularían mediante validación cruzada. El modelo no captura explícitamente la autocorrelación 
-espacial residual \citep{Lombardo2018}, lo que puede inflar la capacidad discriminativa aparente.
+El marco propuesto presenta limitaciones a considerar. El conjunto de entrenamiento de 500 puntos representa el 0{,}024\% de las celdas válidas; estrategias de muestreo espacialmente
+estratificado podrían mejorar la representatividad y reducir el sesgo asociado al desequilibrio de clases
+\citep{Heckmann2014, Chawla2002}. El \textit{target encoding} \citep{MicciBarreca2001} calculado sobre el conjunto completo de
+datos introduce riesgo de filtración de información; implementaciones más rigurosas lo calcularían mediante validación cruzada.
+El modelo no captura explícitamente la autocorrelación espacial residual \citep{Lombardo2018}, lo que puede inflar la capacidad
+discriminativa aparente medida por el AUC-ROC \citep{Fawcett2006}.
 
 % =========================================================
 \section{Conclusiones}
