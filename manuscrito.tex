@@ -201,45 +201,103 @@ susceptibilidad por deslizamientos \citep{VanWesten2003, Reichenbach2018} (Fig.~
 El aspecto ($\alpha$, en grados desde el norte geográfico) refleja la orientación de la ladera como proxy de la exposición solar,
 la distribución de humedad y el régimen de vegetación \citep{Moore1991}. El Índice Topográfico de Humedad
 \citep[ITH;][]{BandaKirkby1979, Moore1991} estima la tendencia de cada celda a acumular agua en el suelo en condiciones de estado
-estacionario. La geología fue obtenida de los estudios de Microzonificacion sismica del Valle de Aburra a escala 1:10.000, y rasterizada, distinguiendo cinco
-unidades litológicas: Suelos transportados, rocas metamórficas, intrusivos graníticos, y
-dos secuencias volcánicas (norte y sur) \citep{MayaGonzalez1995}. La cobertura del suelo fue derivada de imágenes de sensores
-remotos y reclasificada en cinco categorías funcionales: bosque, pastos y herbazales, urbano formal, urbano informal y
-condominios/áreas periurbanas.
+estacionario. La geología fue obtenida de los estudios de Microzonificacion sismica del Valle de Aburra a escala 1:10.000, y rasterizada,
+ distinguiendo cuatro unidades litológicas: Suelos transportados, rocas metamórficas, intrusivos graníticos, y
+rocas volcánicas \citep{MayaGonzalez1995}. La cobertura del suelo fue derivada de imágenes de sensores
+remotos Sentinel 2 y reclasificada en cinco categorías: bosque, pastos, urbano formal, urbano informal y
+periurbano.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1.0\textwidth]{Fig_covariates.png}
-    \caption{Variables condicionantes: A)~Pendiente, B)~Aspecto, C)~ITH, D)~Geología (cinco unidades litológicas) y E)~Cobertura del Suelo (cinco clases funcionales).}
+    \caption{Variables condicionantes: A)~Pendiente, B)~Aspecto, C)~ITH, D)~Geología y E)~Cobertura del Suelo.}
     \label{fig:covariables}
 \end{figure}
 
 Previo al modelado se evaluó la colinealidad de las variables continuas mediante la correlación de Spearman ($\rho$) y se compararon 
 las distribuciones de frecuencia de cada variable entre sitios con deslizamientos y celdas de la cuenca.
 
-Como primer paso del análisis de susceptibilidad, se construyó un mapa de densidad espacial del inventario mediante la estimación 
-por kernel bivariada sobre las coordenadas proyectadas de los 583 eventos. La función de densidad en cada punto $\mathbf{s}$ de la 
+Se construyó un mapa de densidad espacial del inventario mediante la estimación por kernel bivariada sobre las coordenadas 
+proyectadas de los 583 eventos. La función de densidad en cada punto $\mathbf{s}$ de la 
 cuenca es:
 
 \begin{equation}
     \hat{f}(\mathbf{s}) = \frac{1}{n\,h^2} \sum_{i=1}^{n} K\!\left(\frac{\mathbf{s} - \mathbf{s}_i}{h}\right)
     \label{eq:kde}
 \end{equation}
-donde $n = 583$ es el número de eventos, $K(\cdot)$ es el núcleo gaussiano isótropo y $h$ es el ancho de banda seleccionado
-automáticamente mediante la regla de Silverman ($h \approx 691$~m) \citep{Silverman1986}. La superficie $\hat{f}(\mathbf{s})$
-fue normalizada al intervalo $[0,1]$ para su uso como variable de respuesta del primer modelo.
-
-\textbf{Proceso Gaussiano de Regresión (PGR).} La primera estrategia de modelado consistió en entrenar un Proceso Gaussiano de Regresión que predice la densidad KDE 
-del inventario a partir de las covariables del terreno. En este enfoque, la variable de respuesta es el valor de densidad 
-$\hat{f}(\mathbf{s})$ en cada punto de entrenamiento, en lugar de la etiqueta binaria de presencia/ausencia:
+donde $n = 583$ es el número de eventos y $K(\cdot)$ es el núcleo gaussiano isótropo. El parámetro $h$ es el ancho de banda, 
+seleccionado automáticamente mediante la regla empírica de \citet{Silverman1986}. Esta regla estima el ancho de banda óptimo 
+que minimiza el error cuadrático medio integrado asumiendo una distribución subyacente normal. Para datos espaciales bidimensionales 
+($d=2$), se calcula como:
 
 \begin{equation}
-    \hat{f}(\mathbf{x}) = g(\mathbf{x}) + \varepsilon, \qquad g \sim \mathcal{GP}(0,\, k(\mathbf{x},\mathbf{x}')), \quad \varepsilon \sim \mathcal{N}(0,\sigma_n^2)
+    h = n^{-\frac{1}{6}} \sigma
+    \label{eq:silverman}
+\end{equation}
+donde $\sigma$ es la desviación estándar media de las coordenadas de los eventos. Este cálculo arrojó un valor de $h \approx 691$~m. 
+
+Finalmente, la superficie continua $\hat{f}(\mathbf{s})$ fue normalizada al intervalo $[0,1]$.
+
+
+\textbf{Marco formal de los Procesos Gaussianos.}
+Un Proceso Gaussiano (PG) es una distribución de probabilidad definida directamente sobre funciones
+\citep{Rasmussen2006}. A diferencia de los modelos convencionales, que producen un único valor de
+susceptibilidad por celda, el PG asigna a cada punto del espacio de covariables una distribución
+de probabilidad completa: la \textit{media posterior} es la estimación central de susceptibilidad y la
+\textit{desviación estándar posterior} cuantifica la incertidumbre, es decir,
+cuán pobremente está restringida esa estimación por los datos de entrenamiento disponibles.
+
+La función latente $f:\mathbb{R}^D\!\to\mathbb{R}$ que relaciona las $D$ covariables del terreno con el
+índice de susceptibilidad se modela mediante el prior:
+\begin{equation}
+    f(\mathbf{x}) \sim \mathcal{GP}\!\bigl(0,\; k(\mathbf{x},\mathbf{x}')\bigr)
+    \label{eq:gp_prior}
+\end{equation}
+donde se asume media cero y la función de covarianza $k(\mathbf{x},\mathbf{x}')$ codifica la similitud esperada entre
+los valores de $f$ en dos puntos del espacio de covariables: sitios con condiciones morfológicas y ambientales
+similares tendrán susceptibilidades correlacionadas. Se empleó el núcleo Matern-$\nicefrac{3}{2}$ con
+Determinación Automática de Relevancia (ARD) \citep{Matern1960, Rasmussen2006}:
+\begin{equation}
+    k(\mathbf{x},\mathbf{x}') = \sigma_f^2\!\left(1 + \sqrt{3}\,r_l\right)\exp\!\left(-\sqrt{3}\,r_l\right),
+    \qquad
+    r_l = \sqrt{\sum_{d=1}^{D}\!\left(\frac{x_d - x'_d}{l_d}\right)^{\!2}}
+    \label{eq:matern}
+\end{equation}
+donde $\sigma_f^2$ es la varianza señal y $l_d$ es la longitud de escala de la covariable $d$. La condición
+ARD otorga a cada variable su propia escala de influencia: una longitud de escala pequeña indica que esa
+covariable es muy relevante para discriminar la susceptibilidad; la importancia relativa se estima como
+$w_d = 1/l_d^*$, donde $l_d^*$ es el valor óptimo. Los hiperparámetros
+$\boldsymbol{\theta}=\{\sigma_f^2, l_1,\ldots,l_D\}$ se estiman maximizando la log-verosimilitud marginal:
+\begin{equation}
+    \boldsymbol{\theta}^* = \arg\max_{\boldsymbol{\theta}}\;\log p\!\left(\mathbf{y}\mid\mathbf{X},\boldsymbol{\theta}\right)
+    \label{eq:mle}
+\end{equation}
+Este criterio balancea automáticamente el ajuste a los datos y la complejidad del modelo sin necesidad de un
+conjunto de validación separado.
+
+El costo computacional escala cúbicamente con el tamaño del conjunto de entrenamiento ($\mathcal{O}(n^3)$).
+Por ello, y dado el fuerte desequilibrio de clases (583 celdas con deslizamiento frente a más de
+2{,}087{,}000 de fondo) \citep{Chawla2002, Heckmann2014}, se conformó un conjunto de entrenamiento
+balanceado de 500 puntos: 250 celdas con deslizamiento y 250 de fondo, seleccionadas aleatoriamente
+con semilla fija para reproducibilidad. Este conjunto es compartido por el PGR y el PGC. La predicción
+se realizó en bloques de 50{,}000 celdas sobre las 2{,}087{,}643 celdas válidas de la cuenca.
+
+La diferencia fundamental entre ambos modelos radica en la naturaleza de la variable respuesta: continua
+en el PGR y binaria en el PGC. Esta característica determina la función de verosimilitud adoptada y, con
+ello, la forma de la distribución posterior.
+
+\textbf{Proceso Gaussiano de Regresión (PGR).} En el PGR la variable respuesta es
+\textit{continua}: la densidad espacial del inventario $\hat{f}(\mathbf{s})$ calculada mediante KDE
+(Ec.~\ref{eq:kde}). Se asume una verosimilitud gaussiana con ruido de observación independiente:
+\begin{equation}
+    y_i = f(\mathbf{x}_i) + \varepsilon_i, \qquad \varepsilon_i \sim \mathcal{N}(0,\sigma_n^2)
     \label{eq:pgr}
 \end{equation}
-donde $g(\mathbf{x})$ es la función latente de proceso gaussiano y $\varepsilon$ es el ruido de observación. Se utilizaron las tres 
-variables del modelo clasificador óptimo (pendiente, geología codificada y cobertura codificada) con el mismo conjunto de 
-entrenamiento balanceado de 500 puntos.
+Bajo esta verosimilitud, la distribución posterior $p(f\mid\mathbf{X},\mathbf{y})$ es gaussiana y se
+obtiene analíticamente sin necesidad de aproximaciones. La media posterior proporciona el mapa de
+susceptibilidad y la varianza posterior cuantifica la incertidumbre de la estimación en cada celda.
+Se utilizaron tres covariables: pendiente, geología y cobertura del suelo.
+
 
 Los núcleos estándar de PG ---incluido el Matérn-$\nicefrac{3}{2}$--- están definidos sobre espacios de entrada continuos y
 computan similitudes mediante distancias euclídeas; las variables categóricas nominales carecen de una métrica de distancia
@@ -263,33 +321,21 @@ interpretable como la probabilidad empírica de falla de cada unidad litológica
 longitud de escala ARD de esas variables; y (3)~es compatible con implementaciones estándar del PG sin requerir núcleos
 especializados.
 
-\textbf{Proceso Gaussiano de Clasificación (PGC).} El PGC modela la probabilidad de ocurrencia de deslizamiento mediante una función 
-latente $f(\mathbf{x})$ transformada por una función logística \citep{Rasmussen2006}:
-
+\textbf{Proceso Gaussiano de Clasificación (PGC).} En el PGC la variable respuesta es
+\textit{binaria}: presencia ($y=1$) o ausencia ($y=0$) de deslizamiento en cada celda. La verosimilitud
+gaussiana del PGR no es apropiada para este caso; en su lugar se adopta la verosimilitud de Bernoulli,
+conectando la función latente $f(\mathbf{x})$ con la probabilidad de ocurrencia mediante la función logística:
 \begin{equation}
-    p(y=1\,|\,\mathbf{x}) = \frac{1}{1 + \exp(-f(\mathbf{x}))}
+    p(y=1\mid\mathbf{x}) = \sigma\!\left(f(\mathbf{x})\right) = \frac{1}{1 + \exp\!\left(-f(\mathbf{x})\right)}
     \label{eq:gpc}
 \end{equation}
+Dado que la verosimilitud de Bernoulli no es conjugada con el prior gaussiano, la distribución posterior
+$p(f\mid\mathbf{X},\mathbf{y})$ no tiene forma cerrada y se aproxima mediante el método de Laplace, que
+ajusta una distribución gaussiana alrededor del modo de la posterior \citep{Rasmussen2006}. La
+incertidumbre posterior de la función latente se propaga a través de la función logística para obtener la
+distribución de probabilidad de susceptibilidad en cada celda, constituyendo el mapa de
+incertidumbre nativo del modelo.
 
-La función latente sigue un prior de PG $f(\mathbf{x}) \sim \mathcal{GP}(0, k(\mathbf{x}, \mathbf{x}'))$. Dado que la verosimilitud 
-de Bernoulli no es conjugada con el prior gaussiano, la inferencia posterior se realiza mediante la aproximación de Laplace. 
-Se empleó un núcleo de Matérn-$\nicefrac{3}{2}$ \citep{Matern1960} con Determinación Automática de Relevancia (ARD)
-\citep{Rasmussen2006}, que permite a cada variable $d$ tener su propia longitud de escala optimizada $l_d$:
-
-\begin{equation}
-    k(\mathbf{x}, \mathbf{x}') = \sigma_f^2 \left(1 + \sqrt{3}\,r_l\right)\exp\!\left(-\sqrt{3}\,r_l\right), \qquad r_l = \sqrt{\sum_{d} \left(\frac{x_d - x'_d}{l_d}\right)^2}
-    \label{eq:matern}
-\end{equation}
-
-La importancia relativa de cada variable se estima como $1/l_d^*$: longitud de escala pequeña indica alta relevancia para la 
-clasificación.
-
-El fuerte desequilibrio de clases (583 celdas con deslizamiento frente a más de 2{,}087{,}000 de fondo) hace al entrenamiento
-directo computacionalmente inviable para el PGC ($\mathcal{O}(n^3)$) y es un desafío reconocido en el modelado de susceptibilidad
-\citep{Chawla2002, Heckmann2014}. Se conformó un conjunto balanceado de 500 puntos: 250 celdas con deslizamiento y 250 de fondo
-(semilla fija para reproducibilidad), compartido entre el PGR y PGC. La predicción se realizó en
-bloques de 50{,}000 celdas sobre las 2{,}087{,}643 celdas válidas. Adicionalmente, se entrenó un PGR sobre las etiquetas binarias para 
-obtener la desviación estándar posterior $\hat{\sigma}(\mathbf{x})$ como proxy de la incertidumbre epistémica.
 
 Ambos enfoques fueron evaluados mediante el AUC-ROC \citep{Fawcett2006} sobre la cuadrícula completa de la cuenca frente al mapa
 binario del inventario. Se calcularon adicionalmente la Precisión Media (AP) y la puntuación de Brier \citep{Brier1950}. Para el
