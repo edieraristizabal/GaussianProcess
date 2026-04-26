@@ -167,8 +167,8 @@ ext = plotting_extent(np.zeros(dem_shape), dem_trans)
 
 gpr_kde_map = np.full(dem_shape, np.nan, np.float32)
 gpr_kde_map[r_valid, c_valid] = gpr_pred_clipped
-vmin_pgr = 0.37
-vmax_pgr = 0.42
+vmin_pgr = 0.38
+vmax_pgr = 0.41
 print(f'  PGR-KDE susceptibility range (fixed): {vmin_pgr} – {vmax_pgr}')
 
 fig, ax = plt.subplots(figsize=(10, 10))
