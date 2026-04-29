@@ -40,7 +40,7 @@
 \vspace*{2cm}
 
 {\LARGE\bfseries
-Implementación de Procesos Gaussianos para la evaluación de la susceptibilidad por movimientos en masa
+Implementación de Procesos Gaussianos para la evaluación de la susceptibilidad por deslizamientos
 \par}
 
 \vspace{1.5cm}
@@ -60,7 +60,7 @@ $^*$ Correspondencia: evaristizabalg@unal.edu.co
 
 \noindent
 Los movimientos en masa constituyen uno de las amenazas de origen natural más recurrentes en las regiones montañosas tropicales. 
-Este estudio aplica un enfoque secuencial de procesos gaussianos (PG) para la cartografía de susceptibilidad en una cuenca de
+Este estudio aplica un enfoque de procesos gaussianos (PG) para la cartografía de susceptibilidad por deslizamientos en una cuenca de
 Medellín, Colombia, la cuenca La Iguana (52{,}2~km$^2$). Como primer enfoque se implementó un Proceso Gaussiano de Regresión (PGR)
 entrenado sobre la superficie de densidad del inventario obtenida mediante estimación por kernel (KDE, ancho de banda
 Silverman $\approx$~691~m); sin embargo, este modelo no discriminó adecuadamente los sitios susceptibles (AUC~=~0{,}559),
@@ -69,14 +69,14 @@ terreno a resolución de 5~m. Ante este resultado, se adoptó un Proceso Gaussia
 directamente la probabilidad de ocurrencia celda por celda, con verosimilitud de Bernoulli e inferencia mediante la
 aproximación de Laplace. El PGC con función de covarianza Matérn-$\nicefrac{3}{2}$ y Determinación Automática de Relevancia (ARD) fue
 evaluado en cuatro combinaciones de variables; un modelo parsimonioso de tres variables ---pendiente, geología y cobertura del
-suelo--- alcanzó AUC~=~0{,}823 sobre las 2{,}087{,}643 celdas de la cuenca, prácticamente idéntico al \textit{Benchmark} de cinco
+suelo--- alcanzó AUC~=~0{,}823 sobre las 2{,}087{,}643 celdas de la cuenca, prácticamente idéntico al modelo de cinco
 variables (AUC~=~0{,}826). El análisis ARD revela la dominancia de la cobertura del suelo (importancia~0{,}272), seguida de la
 pendiente (0{,}215) y la geología (0{,}062). El PGC proporciona como producto nativo la distribución posterior de la
-incertidumbre, identificando zonas pobremente restringidas por los datos históricos y convirtiendo el mapa de desviación estándar
+incertidumbre, identificando zonas pobremente restringidas por los datos del inventario, lo que convierte el mapa de desviación estándar
 en una herramienta de apoyo a la toma de decisiones.
 
 \vspace{0.5cm}
-\noindent\textbf{Palabras clave:} susceptibilidad, movimientos en masa, procesos gaussianos, Colombia.
+\noindent\textbf{Palabras clave:} susceptibilidad, deslizamientos, procesos gaussianos, Colombia.
 
 \end{titlepage}
 
@@ -84,7 +84,7 @@ en una herramienta de apoyo a la toma de decisiones.
 \section{Introducción}
 \label{sec:introduccion}
 
-Los movimientos en masa son una de las amenazas de origen natural de mayor recurrencia y consecuencias en terrenos de montaña y
+Los movimientos en masa son una de las amenazas de origen natural de mayor recurrencia y afectaciones en terrenos de montaña y
 ambientes tropicales \citep{Varnes1978, Hungr2014, Gomez2023}. En Colombia, la confluencia de topografía montañosa, perfiles de meteorización
 profunda, lluvias de alta intensidad y expansión urbana acelerada en zonas de ladera crean condiciones de riesgo muy altas
 \citep{Aristizabal2012}. El Valle de Aburrá en los Andes colombianos, donde se encuentra la ciudad de Medellín, ha registrado
@@ -92,14 +92,11 @@ centenares de movimientos en masa con víctimas fatales desde su expansión sobr
 
 La cartografía de susceptibilidad por movimientos en masa estima la probabilidad espacial de falla a partir de las características
 del terreno y condiciones ambientales, constituyendo la base para la zonificación del riesgo, la planificación territorial y el diseño 
-de medidas de mitigación de riesgo \citep{Guzzetti2005, Corominas2014}. Durante los últimos treinta años se ha desarrollado un amplio 
+de medidas de mitigación de riesgo \citep{Guzzetti2005, Corominas2014}. Durante las últimas décadas se ha desarrollado un amplio 
 espectro de enfoques estadísticos
-y de aprendizaje automático, desde métodos bivariados hasta regresión logística (RL), máquinas de soporte vectorial, bosques
-aleatorios y redes neuronales profundas \citep{Reichenbach2018, Chen2017, Corominas2014}. Entre estos, la RL sigue siendo el
-método de referencia por su interpretabilidad estadística y sus protocolos de validación binarios bien establecidos
-\citep{HosmerLemeshow2000, Atkinson1998, Fawcett2006}.
-
-La mayoría de los métodos estadísticos y de aprendizaje automático para la cartografía de susceptibilidad por deslizamientos comparten una
+y de aprendizaje automático, desde métodos bivariados como Peso de la Evidencia, regresión logística (RL), máquinas de soporte vectorial, bosques
+aleatorios y redes neuronales profundas \citep{Reichenbach2018, Chen2017, Corominas2014}. La mayoría de los métodos estadísticos y de 
+aprendizaje automático para la cartografía de susceptibilidad por deslizamientos comparten una
 arquitectura común: a partir de una muestra de entrenamiento que combina sitios con y sin deslizamientos, el modelo aprende una
 regla general que relaciona las características del terreno con la probabilidad de ocurrencia; esa regla se replica luego
 uniformemente sobre la totalidad de las unidades del territorio de interés \citep{VanWesten2003, Reichenbach2018}. Esta lógica de modelo global
@@ -110,20 +107,17 @@ modelo para generalizar más allá de los casos observados \citep{Heckmann2014}.
 Un aspecto sistemáticamente omitido en la cartografía convencional de susceptibilidad es la cuantificación explícita de la
 incertidumbre asociada a cada predicción. La susceptibilidad es inherentemente incierta: los datos de entrada contienen ruido de
 medición, el inventario de deslizamientos es incompleto y espacialmente sesgado, y existen variables latentes no observadas, 
-profundidad del perfil de meteorización, permeabilidad secundaria, lluvia efectiva, entre otros, cuya influencia sobre la inestabilidad es
-significativa pero que generalmente no puede capturarse con las covariables topográficas y ambientales disponibles \citep{Corominas2014}. Una celda
-con susceptibilidad predicha de 0{,}7 bien respaldada por el inventario no equivale, desde el punto de vista de la gestión del
-riesgo, a otra con el mismo valor predicho pero pobremente restringida por los datos. Ignorar esta diferencia puede conducir a
-decisiones erróneas \citep{Guzzetti2005}.
+profundidad del perfil de meteorización, permeabilidad secundaria, lluvia efectiva, entre otros, cuya influencia sobre la estabilidad de laderas
+es significativa pero que generalmente no puede capturarse con las covariables topográficas y ambientales disponibles \citep{Corominas2014}.
 
-La concepción dominante en el modelado de susceptibilidad trata el problema como una clasificación por unidades de análisis: el
+La concepción dominante en el modelado de susceptibilidad por deslizamientos trata el problema como una clasificación por unidades de análisis: el
 territorio se subdivide en unidades de mapeo, tales como áreas administrativas, cuencas, slope units o celdas de una
 cuadrícula, y se asigna un valor escalar de susceptibilidad a cada unidad \citep{Guzzetti2005, Reichenbach2018}. Aunque el uso
 de celdas de alta resolución reduce el área de cada unidad, la lógica subyacente no cambia: el valor de cada celda se estima de
 forma independiente, sin imponer restricciones de continuidad espacial con sus vecinas. El resultado puede presentar transiciones
 abruptas entre celdas adyacentes con condiciones ambientales y topográficas similares, inconsistentes con el carácter continuo y
 gradual de los procesos geomorfológicos que controlan la estabilidad de la ladera. Una perspectiva alternativa consiste en tratar la
-susceptibilidad como una superficie aleatoria continua: una función espacialmente coherente que varía de forma suave a través del
+susceptibilidad como una superficie continua: una función espacialmente coherente que varía de forma suave a través del
 paisaje y cuya estructura de correlación refleja la dependencia natural entre sitios próximos \citep{Lombardo2020}.
 
 Los Procesos Gaussianos (PG) ofrecen un marco probabilístico no paramétrico que, de forma natural, responde a los tres desafíos
@@ -143,7 +137,7 @@ bosques aleatorios y redes neuronales, es el elevado costo computacional, que es
 entrenamiento ($\mathcal{O}(n^3)$), restringiendo su aplicabilidad directa a muestras de tamaño moderado \citep{Rasmussen2006}.
 
 En este artículo se aplica un marco metodológico con Procesos Gaussianos para evaluar la susceptibilidad por movimientos en masa como una superficie considerando 
-la variable respuesta (susceptibilidad) como una variable continua (densidad de movimientos en masa) o categórica (probabilidad de movimiento en masa)
+la susceptibilidad como una variable continua (densidad de movimientos en masa) o categórica (probabilidad de movimiento en masa)
  utilizando variables morfométricas continuas y variables ambientales categóricas. Los modelos implementados incorporan la incertidumbre posterior y su relación 
  con el espacio de covariables para identificar zonas que requieren datos adicionales de campo.
 
@@ -151,19 +145,18 @@ la variable respuesta (susceptibilidad) como una variable continua (densidad de 
 \section{Área de estudio}
 
 El área de estudio es la cuenca La Iguana (Fig.~\ref{fig:area_estudio}), ubicada en la vertiente occidental de la Cordillera
-Central de lso Andes Colombianos, dentro de la unidad geografica conocida como Valle de Aburrá. Con una superficie de 52{,}2~km$^2$ 
+Central de los Andes Colombianos, dentro de la unidad geografica conocida como Valle de Aburrá. Con una superficie de 52{,}2~km$^2$ 
 y elevaciones entre 1465 y 3141~m~s.n.m. \citep{AristizabalYokota2008}. La cuenca presenta una red de drenaje dendrítica con alta densidad de drenaje
- y un relieve superior a 1500~m, reflejo del intenso encañonamiento fluvial asociado al tectonismo activo de los Andes colombianos
+ y un relieve superior a 1500~m, reflejo del encañonamiento fluvial asociado al tectonismo activo de los Andes colombianos
 \citep{AristizabalYokota2008, GarciaDelgado2020}.
 
-El substrato geológico está dominado por rocas metamorficas, tipo esquistos, anfibolitas y gneis, una unidad
-litodémica que constituye el núcleo metamórfico de la Cordillera Central entre las fallas de Otú-Pericos
+La geología está dominada por rocas metamorficas, tipo esquistos, anfibolitas y gneis, que constituyen el núcleo metamórfico de la 
+Cordillera Central entre las fallas de Otú-Pericos
 al oriente y la falla de San Jerónimo al occidente \citep{MayaGonzalez1995, Vinasco2006}. Estas rocas metamórficas están
 intensamente fracturadas y meteorizadas, generando perfiles de saprolito de 5 a 20~m de profundidad, susceptibles a deslizamientos
  durante eventos de lluvia \citep{Aristizabal2023}. Estas rocas metamorficas están intruidas localmente por cuerpos graniticos y 
- flanqueado por rocas volcánicas de afinidad oceanica tipo dunitas al norte y basaltos al sur. las alderas del valle estan cubiertas por 
- depositos de vertiente \citep{Garcia2006} y el fondo del valle está cubierto por 
- depósitos aluviales, aluviotorrenicales \citep{MayaGonzalez1995}.
+ flanqueado por rocas volcánicas de afinidad oceanica tipo dunitas al norte y basaltos al sur. las laderas del valle estan cubiertas por 
+ depositos de vertiente \citep{Garcia2006} y el fondo del valle está cubierto por depósitos aluviales, aluviotorrenicales \citep{MayaGonzalez1995}.
 
 El régimen climático es tropical bimodal, con precipitaciones medias anuales de 1800 a 3000~mm concentradas en dos períodos
 lluviosos (marzo--mayo y septiembre--noviembre). Las tormentas convectivas de alta intensidad y corta duración constituyen el
@@ -183,26 +176,27 @@ principal detonante de los movimientos en masa en la cuenca \citep{Aristizabal20
 \section{Datos y metodología}
 \label{sec:metodos}
 
-El inventario de movimientos en masa empleado comprende 583 eventos georreferenciados en la cuenca La Iguana,
+El inventario de movimientos en masa empleado comprende 583 eventos georreferenciados en la cuenca La Iguaná,
 construido mediante interpretación visual sistemática de imágenes de alta resolución submétrica disponibles en Google
 Earth para el período 2000--2025. Cada evento fue delimitado manualmente como polígono sobre las imágenes más recientes
 disponibles para cada fecha, identificando la cicatriz o zona de deposición según el tipo de movimiento, y reducido
-posteriormente a su centroide para el análisis espacial. El inventario está integrado en la base de datos de movimientos
+posteriormente al centroide del escarpe para el análisis espacial. El inventario está integrado en la base de datos de movimientos
 en masa del Valle de Aburrá descrita en \citet{Aristizabal2023}, la cual documenta las condiciones de lluvia detonante
 asociadas a cada evento.
 
 Se utilizó un MDE de 1~m de resolución derivado de levantamientos LiDAR. Previo a la derivación de atributos, se aplicó un
 acondicionamiento hidrológico (relleno de depresiones y resolución de ambigüedades de flujo) con la biblioteca \texttt{pysheds}
-\citep{OCallaghan1984}. Todas las capas fueron remuestreadas a la resolución de 5~m mediante interpolación bilineal (variables
+\citep{OCallaghan1984} en Python. Todas las capas fueron remuestreadas a la resolución de 5~m mediante interpolación bilineal (variables
 continuas) o por vecino más próximo (variables categóricas).
 
 Se seleccionaron cinco covariables que representan los principales factores condicionantes de la
-susceptibilidad por deslizamientos \citep{VanWesten2003, Reichenbach2018} (Fig.~\ref{fig:covariables}). La pendiente ($\beta$) cuantifica el gradiente gravitacional local \citep{Moore1991}.
+susceptibilidad por deslizamientos \citep{VanWesten2003, Reichenbach2018} (Fig.~\ref{fig:covariables}). La pendiente ($\beta$) cuantifica el 
+gradiente gravitacional local \citep{Moore1991}.
 El aspecto ($\alpha$, en grados desde el norte geográfico) refleja la orientación de la ladera como proxy de la exposición solar,
 la distribución de humedad y el régimen de vegetación \citep{Moore1991}. El Índice Topográfico de Humedad
 \citep[ITH;][]{BandaKirkby1979, Moore1991} estima la tendencia de cada celda a acumular agua en el suelo en condiciones de estado
 estacionario. La geología fue obtenida de los estudios de Microzonificacion sismica del Valle de Aburra a escala 1:10.000, y rasterizada,
- distinguiendo cuatro unidades litológicas: Suelos transportados, rocas metamórficas, intrusivos graníticos, y
+ distinguiendo cuatro unidades litológicas: suelos transportados, rocas metamórficas, intrusivos graníticos, y
 rocas volcánicas \citep{MayaGonzalez1995}. La cobertura del suelo fue derivada de imágenes de sensores
 remotos Sentinel 2 y reclasificada en cinco categorías: bosque, pastos, urbano formal, urbano informal y
 periurbano.
@@ -218,8 +212,7 @@ Previo al modelado se evaluó la colinealidad de las variables continuas mediant
 las distribuciones de frecuencia de cada variable entre sitios con deslizamientos y celdas de la cuenca.
 
 Se construyó un mapa de densidad espacial del inventario mediante la estimación por kernel bivariada sobre las coordenadas 
-proyectadas de los 583 eventos. La función de densidad en cada punto $\mathbf{s}$ de la 
-cuenca es:
+proyectadas de los 583 eventos. La función de densidad en cada punto $\mathbf{s}$ de la cuenca es:
 
 \begin{equation}
     \hat{f}(\mathbf{s}) = \frac{1}{n\,h^2} \sum_{i=1}^{n} K\!\left(\frac{\mathbf{s} - \mathbf{s}_i}{h}\right)
@@ -235,7 +228,6 @@ que minimiza el error cuadrático medio integrado asumiendo una distribución su
     \label{eq:silverman}
 \end{equation}
 donde $\sigma$ es la desviación estándar media de las coordenadas de los eventos. Este cálculo arrojó un valor de $h \approx 691$~m. 
-
 Finalmente, la superficie continua $\hat{f}(\mathbf{s})$ fue normalizada al intervalo $[0,1]$.
 
 \subsection{Procesos Gaussianos}
@@ -254,7 +246,8 @@ La función latente $f:\mathbb{R}^D\!\to\mathbb{R}$ que relaciona las $D$ covari
 \end{equation}
 donde se asume media cero y la función de covarianza $k(\mathbf{x},\mathbf{x}')$ codifica la similitud esperada entre
 los valores de $f$ en dos puntos del espacio de covariables: sitios con condiciones morfológicas y ambientales
-similares tendrán susceptibilidades correlacionadas. La elección de $k$ es la principal decisión de diseño del PG: determina la suavidad de la superficie de susceptibilidad, el alcance de la correlación
+similares tendrán susceptibilidades correlacionadas. La elección de $k$ es la principal decisión de diseño del PG: 
+determina la suavidad de la superficie de susceptibilidad, el alcance de la correlación
 entre sitios en el espacio de covariables y la capacidad del modelo para capturar patrones no lineales.
 En ese sentido, cumple el mismo papel estructural que la forma funcional en la regresión logística
 o las reglas de partición en los bosques aleatorios.
@@ -285,15 +278,13 @@ balanceado de 500 puntos: 250 celdas con deslizamiento y 250 de fondo, seleccion
 con semilla fija para reproducibilidad. Este conjunto es compartido por el PGR y el PGC. La predicción
 se realizó en bloques de 50{,}000 celdas sobre las 2{,}087{,}643 celdas válidas de la cuenca.
 
-
 Las funciones de covarianza continuas ---incluido el Matérn-$\nicefrac{3}{2}$--- están definidas sobre espacios de entrada continuos y
 computan similitudes mediante distancias euclideanas; las variables categóricas nominales carecen de una métrica de distancia
 inherente y requieren transformación previa al modelado \citep{GarridoMerchan2020, Rasmussen2006}. Las dos alternativas
 principales son: (i)~la \textit{codificación binaria} (\textit{one-hot}), que genera un indicador 0/1 por categoría; y 
 (ii)~las \textit{funciones de covarianza categóricas}, que tratan todos los pares de clases como
-equidistantes e ignoran gradientes de susceptibilidad entre unidades geológicas o de cobertura.
-
-Se adoptó en cambio el \textit{target encoding} \citep{MicciBarreca2001}, que reemplaza cada categoría por la proporción
+equidistantes e ignoran gradientes de susceptibilidad entre unidades geológicas o de cobertura. Se adoptó en cambio el
+ \textit{target encoding} \citep{MicciBarreca2001}, que reemplaza cada categoría por la proporción
 observada de deslizamientos dentro de esa clase en el conjunto de entrenamiento:
 
 \begin{equation}
@@ -321,7 +312,6 @@ ello, la forma de la distribución posterior.
 Bajo esta verosimilitud, la distribución posterior $p(f\mid\mathbf{X},\mathbf{y})$ es gaussiana y se
 obtiene analíticamente sin necesidad de aproximaciones. La media posterior proporciona el mapa de
 susceptibilidad y la varianza posterior cuantifica la incertidumbre de la estimación en cada celda.
-Se utilizaron tres covariables: pendiente, geología y cobertura del suelo.
 
 \textbf{Proceso Gaussiano de Clasificación (PGC).} En el PGC la variable respuesta es
 \textit{binaria}: presencia ($y=1$) o ausencia ($y=0$) de deslizamiento en cada celda. La verosimilitud
@@ -411,16 +401,17 @@ Esta superficie constituye la variable de respuesta del primer enfoque de modela
 \end{figure}
 
 La Tabla~\ref{tab:pgr_kde} y la Fig.~\ref{fig:roc_pgr} presentan los resultados del PGR para los 
-modelos PGR univariados y multivariados. Los modelos univariados revelan que las variables categóricas son las más informativas para
+modelos univariados y multivariados. Los modelos univariados revelan que las variables categóricas son las más informativas para
 predecir la densidad KDE del inventario. La geología sola alcanza el mayor AUC (0{,}694), seguida de la cobertura del suelo
 (0{,}631); las variables topográficas continuas (pendiente, aspecto, ITH) se sitúan apenas por encima del nivel aleatorio
-(AUC~$\approx$~0{,}550). Considerando que el aspecto no se;alo un patron diferencial entre celdas on y sisn deslizamientos y que ITH se correlaciona inversamente con la pendiente,
+(AUC~$\approx$~0{,}550). Considerando que el aspecto no señaló un patrón diferencial entre celdas con y sin deslizamientos 
+y que ITH se correlaciona inversamente con la pendiente,
 se utilizo un modelo de tres variables (pendiente~+~geología~+~cobertura) que obtiene AUC~=~0{,}559, por debajo de la geología sola, 
 evidenciando que la combinación de covariables no beneficia sustancialmente al PGR.
 El modelo con las cinco variables alcanza AUC~=~0{,}698, el mayor de todos. La correlación de Pearson
 entre las predicciones del PGR de tres variables y la superficie KDE objetivo fue $r = 0{,}061$ (RMSE~=~0{,}255), confirmando
 que ninguna configuración logra reproducir adecuadamente la superficie de densidad. El mapa de susceptibilidad derivado del PGR
- (Fig.~\ref{fig:gpr_susc}) muestra una distribución espacialmente difusa sin la cohesión geomorfológica esperada.
+ (Fig.~\ref{fig:gpr_susc}) muestra una distribución espacialmente difusa sin la coherencia geomorfológica esperada.
 
  \begin{table}[H]
     \centering
@@ -496,8 +487,8 @@ la cobertura ya están incluidas.
     \end{tabular}
 \end{table}
 
-El mapa del modelo PGC óptimo (Fig.~\ref{fig:mapa_final}) muestra una zonificación coherente con la geomorfología: los valores más 
-altos (susceptibilidad~$> 0{,}6$) se concentran en las laderas medias sobre suelso derivados de rocas metamórficas con pendientes escarpadas, 
+El mapa del modelo PGC con mejor desempeño (Fig.~\ref{fig:mapa_final}) muestra una zonificación coherente con la geomorfología: los valores más 
+altos (susceptibilidad~$> 0{,}6$) se concentran en las laderas medias sobre suelos derivados de rocas metamórficas con pendientes fuertes, 
 particularmente en los tributarios orientados al norte y noroccidente; el fondo del valle y los filos de divisoria exhiben 
 valores bajos ($< 0{,}3$).
 
@@ -554,20 +545,18 @@ El análisis ARD del modelo PGC óptimo (Tabla~\ref{tab:ard}) revela que la cobe
 \label{sec:discusion}
 
 La correlación prácticamente nula entre las predicciones del PGR y la superficie KDE ($r = 0{,}061$) confirma que el espacio de
-covariables locales no tiene capacidad suficiente para predecir la densidad espacial regional del inventario. Desde una perspectiva conceptual, el PGR podría ser apropiado si el objetivo fuera predecir la densidad regional 
-de eventos futuros en un contexto con datos ambientales y morfometricos a escala similar; para este caso mas local o puntual al parecer 
-las variables morfometricas locales no explican adecuadamente la densidad de deslizamientos. Adicionalmente, la 
-función latente del PGR se optimiza minimizando el error cuadrático medio sobre los valores de densidad, un criterio de ajuste no 
-alineado con la capacidad discriminativa binaria medida por el AUC, lo que introduce una inconsistencia metodológica entre el 
-criterio de entrenamiento y el de evaluación.
+covariables locales, como pendiente, aspecto e ITH, no tiene capacidad suficiente para predecir la densidad espacial regional 
+del inventario. Desde una perspectiva conceptual, el PGR podría ser apropiado si el objetivo fuera predecir la densidad regional 
+de eventos futuros en un contexto con datos ambientales y morfometricos a escala similar. Para este caso local o puntual los resultados señalan 
+que las variables morfometricas locales no explican adecuadamente la densidad de deslizamientos.
 
 En contraste, el PGC trata cada celda como un ensayo de Bernoulli y optimiza directamente la función latente bajo la verosimilitud 
 binaria, garantizando la alineación entre criterio de entrenamiento y evaluación. Esto explica la ganancia de 26 puntos de AUC
 respecto al PGR. Para el modelado de susceptibilidad a escala de celda con covariables estáticas del terreno, el PGC indica ser un 
 metodo estadísticamente mas apropiado.
 
-Un hallazgo especialmente relevante surge de la comparación de los modelos univariados en ambos tipos de modelo
-(Tablas~\ref{tab:pgr_kde} y~\ref{tab:pgc}): la jerarquía de importancia de las variables cambia al cambiar el tipo de modelo.
+La comparación de los modelos univariados en ambos tipos de modelo
+(Tablas~\ref{tab:pgr_kde} y~\ref{tab:pgc}) muestra que la jerarquía de importancia de las variables cambia al cambiar el tipo de modelo.
 En el PGR, las variables categóricas dominan (geología: AUC~=~0{,}694; cobertura: 0{,}631), mientras que la pendiente es la menos
 informativa (0{,}543). En el PGC, la cobertura del suelo es el predictor más relevante (importancia ARD~=~0{,}272),
 seguida de la pendiente (0{,}215) y la geología (0{,}062). Esto podria tambien explicarse por la escala de analisis que explica cada modelo.
@@ -583,18 +572,12 @@ con las concentraciones suavizadas de eventos. La pendiente, en cambio, varía a
 sistemática con la vecindad KDE. En el PGC, el objetivo es discriminar celdas individuales; a esta resolución, la cobertura
 del suelo emerge como el predictor dominante, superando a la pendiente, lo que indica que las variaciones locales de la cobertura, 
 que en la cuenca La Iguana reflejan directamente la urbanización informal y la intervencion antropica en ladera, son el factor
-condicionante con mayor capacidad discriminativa. Este contraste senala que la importancia de una variable no es una propiedad
-intrínseca de la covariable, sino dependiente del paradigma estadístico y de la escala espacial del objetivo de predicción.
+condicionante con mayor capacidad discriminativa. Este contraste indica que la importancia de una variable no es al parecer una propiedad
+intrínseca de la covariable, sino dependiente de la escala espacial.
 
-Los resultados senalan que el PG alcanza un desempeño competitivo con pocas variables y proporciona como producto nativo la distribución posterior 
+Los resultados indican que el PG alcanza un desempeño competitivo con pocas variables y proporciona como producto nativo la distribución posterior 
 completa sobre la susceptibilidad. Desde una perspectiva práctica, un modelo parsimonioso tiene implicaciones directas para 
-la transferibilidad del método a cuencas con recursos limitados de datos.
-
-La dominancia de la cobertura del suelo en el ARD (importancia relativa 0{,}272), sobre la pendiente (0{,}215) y la geología (0{,}062)
-difiere del patrón reportado habitualmente en estudios regionales, donde la pendiente tiende a ser el predictor dominante \citep{Reichenbach2018,
-Pradhan2010}. A mayor resolución el modelo distinge variaciones locales de la cobertura que reflejan directamente la intervención antrópica del suelo, 
-deforestación, urbanización informal, condominios, cuya influencia sobre la susceptibilidad supera en esta cuenca
-al gradiente gravitacional local.
+la transferibilidad del método a cuencas con recursos limitados de datos. 
 
 La Fig.~\ref{fig:uncertainty_cov} ilustra cómo se estructura la incertidumbre en el espacio de las tres variables del modelo
 óptimo (pendiente, geología y cobertura). Para la pendiente (panel~A), la desviación estándar posterior es mínima en el rango
